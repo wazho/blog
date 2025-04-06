@@ -1,1 +1,40 @@
-if($.prototype.justifiedGallery){var options={rowHeight:140,margins:4,lastRow:"justify"};$(".article-gallery").justifiedGallery(options)}$(document).ready(function(){if($("#header > #nav > ul > .icon").click(function(){$("#header > #nav > ul").toggleClass("responsive")}),$(".post").length){var i=$("#menu"),o=$("#menu > #nav"),e=$("#menu-icon, #menu-icon-tablet");if($(document).width()>=1440&&(i.css("visibility","visible"),e.addClass("active")),e.click(function(){return"hidden"===i.css("visibility")?(i.css("visibility","visible"),e.addClass("active")):(i.css("visibility","hidden"),e.removeClass("active")),!1}),i.length&&$(window).on("scroll",function(){var e=i.offset().top;!o.is(":visible")&&e<50?o.show():o.is(":visible")&&e>100&&o.hide(),!$("#menu-icon").is(":visible")&&e<50?($("#menu-icon-tablet").show(),$("#top-icon-tablet").hide()):!$("#menu-icon").is(":visible")&&e>100&&($("#menu-icon-tablet").hide(),$("#top-icon-tablet").show())}),$("#footer-post").length){var t=0;$(window).on("scroll",function(){var i=$(window).scrollTop();i>t?$("#footer-post").hide():$("#footer-post").show(),t=i,$("#nav-footer").hide(),$("#toc-footer").hide(),$("#share-footer").hide(),i<50?$("#actions-footer > #top").hide():i>100&&$("#actions-footer > #top").show()})}}});
+/*=============== SHOW MENU ===============*/
+const navMenu = document.getElementById('nav-menu'),
+      navToggle = document.getElementById('nav-toggle'),
+      navClose = document.getElementById('nav-close')
+
+/*===== MENU SHOW =====*/
+/* Validate if constant exists */
+if(navToggle){
+    navToggle.addEventListener('click', () =>{
+        navMenu.classList.add('show-menu')
+    })
+}
+
+/*===== MENU HIDDEN =====*/
+/* Validate if constant exists */
+if(navClose){
+    navClose.addEventListener('click', () =>{
+        navMenu.classList.remove('show-menu')
+    })
+}
+
+/*=============== REMOVE MENU MOBILE ===============*/
+const navLink = document.querySelectorAll('.nav__link')
+
+function linkAction(){
+    const navMenu = document.getElementById('nav-menu')
+    // When we click on each nav__link, we remove the show-menu class
+    navMenu.classList.remove('show-menu')
+}
+navLink.forEach(n => n.addEventListener('click', linkAction))
+
+/*=============== SCROLL REVEAL ANIMATION ===============*/
+const sr = ScrollReveal({
+    distance: '90px',
+    duration: 3000,
+})
+
+sr.reveal(`.home__data`, {origin: 'top', delay: 400})
+sr.reveal(`.home__img`, {origin: 'bottom', delay: 600})
+sr.reveal(`.home__footer`, {origin: 'bottom', delay: 800})
