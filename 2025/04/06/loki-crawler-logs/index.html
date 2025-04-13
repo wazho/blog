@@ -1,18 +1,12 @@
 <!DOCTYPE html>
-<html>
-    <head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
-  <meta name="robots" content="index, follow">
-  <!-- title -->
-  
-    
-  <title>利用 Grafana Loki 高效收集與監控爬蟲日誌: Salmon</title>
-    
-  
-  
-  <!-- open graph -->
-  <meta name="description" content="在 Lawsnote 服務期間，因應產品與專案需求，我們需要開發數百支網頁抓取程式 (Web Scraper) 與網頁爬取程式 (Web Crawler)，從政府主管機關的網站中擷取特定法學資料，並在資料梳理的同時，進行結構化處理並寫入資料庫中。  網頁抓取程式 (Web Scraper) 與網頁爬取程式 (Web Crawler)，以下統稱為 crawlers。  Lawsnote 提供的 La">
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="在 Lawsnote 服務期間，因應產品與專案需求，我們需要開發數百支網頁抓取程式 (Web Scraper) 與網頁爬取程式 (Web Crawler)，從政府主管機關的網站中擷取特定法學資料，並在資料梳理的同時，進行結構化處理並寫入資料庫中。  網頁抓取程式 (Web Scraper) 與網頁爬取程式 (Web Crawler)，以下統稱為 crawlers。  Lawsnote 提供的 La">
 <meta property="og:type" content="article">
 <meta property="og:title" content="利用 Grafana Loki 高效收集與監控爬蟲日誌">
 <meta property="og:url" content="https://blog.salmon.tw/2025/04/06/loki-crawler-logs/index.html">
@@ -29,65 +23,138 @@
 <meta property="article:tag" content="node.js, back-end, full-stack">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://blog.salmon.tw/2025/04/06/loki-crawler-logs/01-grafana-add-data-source-loki.png">
-  <!-- canonical -->
-  
-  <link rel="canonical" href="https://blog.salmon.tw/2025/04/06/loki-crawler-logs/">
-  
-  <!-- Favicon -->
-  <link rel="shortcut icon" href="/img/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
-  <!-- CSS -->
-  
-<link rel="stylesheet" href="/css/reset.css">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>利用 Grafana Loki 高效收集與監控爬蟲日誌</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
 
-  
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
 <link rel="stylesheet" href="/css/style.css">
 
-  
-<link rel="stylesheet" href="/css/markdown.css">
-
-  
-<link rel="stylesheet" href="/css/fonts.css">
-
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
 <meta name="generator" content="Hexo 7.3.0"></head>
 
-    <body>
-        <div class="paper">
-            <div class="paper-main">
-                
-                    <div class="post-header">
-    <a class="logo" href="/">Salmon</a>
-    <!-- <div class="logo"><a href="/" title="Len"><img src="/img/logo.svg" alt="Len" aria-label="logo" height="20"></a></div> -->
-        <ul class="nav">
-            
-            <li><a href="/">Home</a></li>
-            
-            <li><a target="_blank" rel="noopener" href="https://salmon.tw">About</a></li>
-            
-            <li><a href="/archives">Archives</a></li>
-            
-        </ul>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://salmon.tw">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2018/11/14/Elastic%20Stack%20-%20Heartbeat/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&text=利用 Grafana Loki 高效收集與監控爬蟲日誌"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&title=利用 Grafana Loki 高效收集與監控爬蟲日誌"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&is_video=false&description=利用 Grafana Loki 高效收集與監控爬蟲日誌"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=利用 Grafana Loki 高效收集與監控爬蟲日誌&body=Check out this article: https://blog.salmon.tw/2025/04/06/loki-crawler-logs/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&title=利用 Grafana Loki 高效收集與監控爬蟲日誌"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&title=利用 Grafana Loki 高效收集與監控爬蟲日誌"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&title=利用 Grafana Loki 高效收集與監控爬蟲日誌"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&title=利用 Grafana Loki 高效收集與監控爬蟲日誌"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&name=利用 Grafana Loki 高效收集與監控爬蟲日誌&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&t=利用 Grafana Loki 高效收集與監控爬蟲日誌"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
 
-
-    </a>
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E6%96%87%E6%9E%B6%E6%A7%8B"><span class="toc-number">1.</span> <span class="toc-text">本文架構</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%82%BA%E4%BB%80%E9%BA%BC%E9%9C%80%E8%A6%81%E6%97%A5%E8%AA%8C%E7%9B%A3%E6%8E%A7%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">為什麼需要日誌監控？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E9%BA%BC%E6%A8%A3%E7%9A%84%E8%B3%87%E6%96%99%E9%81%A9%E5%90%88%E6%94%B6%E9%9B%86%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">什麼樣的資料適合收集？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A8%AD%E8%A8%88%E6%97%A5%E8%AA%8C%E5%85%A7%E5%AE%B9%EF%BC%9F"><span class="toc-number">3.</span> <span class="toc-text">如何設計日誌內容？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E8%AA%8C%E7%AD%89%E7%B4%9A"><span class="toc-number">3.1.</span> <span class="toc-text">日誌等級</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%B7%E3%80%8C%E5%93%AA%E4%BA%9B%E6%97%A5%E8%AA%8C%E5%80%BC%E5%BE%97%E8%A8%98%E9%8C%84%E3%80%8D%EF%BC%9F"><span class="toc-number">3.2.</span> <span class="toc-text">如何判斷「哪些日誌值得記錄」？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E7%B5%90%E6%A7%8B%E5%8C%96%E7%9A%84%E6%97%A5%E8%AA%8C%E8%A8%AD%E8%A8%88%E5%8E%9F%E5%89%87"><span class="toc-number">3.3.</span> <span class="toc-text">可結構化的日誌設計原則</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Grafana-Loki-%E6%94%B6%E9%9B%86%E6%97%A5%E8%AA%8C%E8%B3%87%E6%96%99"><span class="toc-number">4.</span> <span class="toc-text">使用 Grafana Loki 收集日誌資料</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Docker-Compose-%E5%BB%BA%E7%AB%8B%E7%92%B0%E5%A2%83"><span class="toc-number">4.1.</span> <span class="toc-text">使用 Docker Compose 建立環境</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#docker-compose-yaml-%E7%9A%84%E5%9F%BA%E7%A4%8E"><span class="toc-number">4.1.1.</span> <span class="toc-text">docker-compose.yaml 的基礎</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#loki-service"><span class="toc-number">4.1.2.</span> <span class="toc-text">loki service</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#promtail-service"><span class="toc-number">4.1.3.</span> <span class="toc-text">promtail service</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#grafana-service"><span class="toc-number">4.1.4.</span> <span class="toc-text">grafana service</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%87%89%E7%94%A8%E7%A8%8B%E5%BC%8F-service"><span class="toc-number">4.1.5.</span> <span class="toc-text">應用程式 service</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#loki-%E8%A8%AD%E5%AE%9A%E6%AA%94-loki-config-yaml"><span class="toc-number">4.1.6.</span> <span class="toc-text">loki 設定檔: loki-config.yaml</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#promtail-%E8%A8%AD%E5%AE%9A%E6%AA%94-promtail-config-yaml"><span class="toc-number">4.1.7.</span> <span class="toc-text">promtail 設定檔: promtail-config.yaml</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AF%84%E4%BE%8B%E7%A8%8B%E5%BC%8F%E4%B8%8B%E8%BC%89"><span class="toc-number">4.1.8.</span> <span class="toc-text">範例程式下載</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Grafana-%E7%9B%A3%E6%8E%A7%E7%88%AC%E8%9F%B2%E9%81%8B%E8%A1%8C%E7%8B%80%E6%85%8B"><span class="toc-number">5.</span> <span class="toc-text">使用 Grafana 監控爬蟲運行狀態</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%87%89%E7%94%A8%E5%AF%A6%E4%BE%8B%E8%88%87%E5%BB%B6%E4%BC%B8%E5%BB%BA%E8%AD%B0"><span class="toc-number">6.</span> <span class="toc-text">應用實例與延伸建議</span></a></li></ol>
+      </div>
+    
+  </span>
 </div>
 
-                
-                <div class="post-main">
     
-        <div class="post-main-title">
-            利用 Grafana Loki 高效收集與監控爬蟲日誌
-        </div>
-        <div class="post-meta">
-            2025-04-06 ｜ 
-            
-        </div>
-        <!-- 圆角分类 -->
-        <!-- <div class="tags"> -->
-            <!--  -->
-        <!-- </div> -->
-        <div class="post-md">
-            <p>在 <a target="_blank" rel="noopener" href="https://about.lawsnote.com/">Lawsnote</a> 服務期間，因應產品與專案需求，我們需要開發數百支網頁抓取程式 (Web Scraper) 與網頁爬取程式 (Web Crawler)，從政府主管機關的網站中擷取特定法學資料，並在資料梳理的同時，進行結構化處理並寫入資料庫中。</p>
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        利用 Grafana Loki 高效收集與監控爬蟲日誌
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Ze-Hao Wang (Salmon)</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-04-06T12:00:00.000Z" class="dt-published" itemprop="datePublished">2025-04-06</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>在 <a target="_blank" rel="noopener" href="https://about.lawsnote.com/">Lawsnote</a> 服務期間，因應產品與專案需求，我們需要開發數百支網頁抓取程式 (Web Scraper) 與網頁爬取程式 (Web Crawler)，從政府主管機關的網站中擷取特定法學資料，並在資料梳理的同時，進行結構化處理並寫入資料庫中。</p>
 <blockquote>
 <p>網頁抓取程式 (Web Scraper) 與網頁爬取程式 (Web Crawler)，以下統稱為 <strong>crawlers</strong>。</p>
 </blockquote>
@@ -123,16 +190,16 @@
 <h3 id="什麼樣的資料適合收集？"><a href="#什麼樣的資料適合收集？" class="headerlink" title="什麼樣的資料適合收集？"></a>什麼樣的資料適合收集？</h3><p>在設計日誌系統時，並不是所有輸出都適合或需要被收集。我們應該根據系統特性與實際需求，挑選對後續除錯、分析與監控有實質幫助的資料。以開發 crawlers 的經驗來說，建議可以優先考慮以下幾類資訊：</p>
 <ol>
 <li><p><strong>請求相關資訊</strong><br>包括 <em>目標 URL</em>、<em>HTTP method</em>、<em>status code</em>、<em>response time</em> 等，能協助判斷目標網站是否正常、回應速度是否合理。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">2025-01-01 12:00:00 - Requesting URL: https://example.com/api/data</span><br><span class="line">2025-01-01 12:00:01 - Response Status Code: 200</span><br><span class="line">2025-01-01 12:00:01 - Response Time: 200ms</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">2025-01-01 12:00:00 - Requesting URL: https://example.com/api/data</span><br><span class="line">2025-01-01 12:00:01 - Response Status Code: 200</span><br><span class="line">2025-01-01 12:00:01 - Response Time: 200ms</span><br></pre></td></tr></table></figure>
 </li>
 <li><p><strong>任務執行階段狀態</strong><br>每個任務的開始與結束時間，以及中間執行的步驟 (如：下載 → 解析 → 寫入資料庫) 等，有助於還原執行流程與評估效能瓶頸。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2025-01-01 12:00:00 - Task started: Fetching data from example.com</span><br><span class="line">2025-01-01 12:00:01 - Parsing data...</span><br><span class="line">2025-01-01 12:00:02 - Writing data to database...</span><br><span class="line">2025-01-01 12:00:03 - Task completed: Data successfully fetched and stored.</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">2025-01-01 12:00:00 - Task started: Fetching data from example.com</span><br><span class="line">2025-01-01 12:00:01 - Parsing data...</span><br><span class="line">2025-01-01 12:00:02 - Writing data to database...</span><br><span class="line">2025-01-01 12:00:03 - Task completed: Data successfully fetched and stored.</span><br></pre></td></tr></table></figure>
 </li>
 <li><p><strong>錯誤與異常</strong><br>包括 <em>HTTP 錯誤</em>、<em>timeout</em>、<em>資料解析失敗</em> 等。這類訊息應清楚標示，方便集中查詢與設計告警條件。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">2025-01-01 12:00:00 - HTTP Error: 404 Not Found</span><br><span class="line">2025-01-01 12:00:00 - Timeout Error: Request to https://example.com/api/data timed out.</span><br><span class="line">2025-01-01 12:00:00 - Parsing Error: Failed to parse JSON response from https://example.com/api/data</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">2025-01-01 12:00:00 - HTTP Error: 404 Not Found</span><br><span class="line">2025-01-01 12:00:00 - Timeout Error: Request to https://example.com/api/data timed out.</span><br><span class="line">2025-01-01 12:00:00 - Parsing Error: Failed to parse JSON response from https://example.com/api/data</span><br></pre></td></tr></table></figure>
 </li>
 <li><p><strong>環境、版本與其他自定義資訊</strong><br>包括 <em>爬蟲版本</em>、<em>執行機器節點 IP</em>、<em>執行時間的環境變數</em>、<em>使用的函式庫版本</em> 等，有助於 debug 與還原特定部署狀態。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">2025-01-01 12:00:00 - Crawler Version: 1.0.0</span><br><span class="line">2025-01-01 12:00:00 - Hostname: crawler-node-01</span><br><span class="line">2025-01-01 12:00:00 - IP Address: 10.0.0.15</span><br><span class="line">2025-01-01 12:00:00 - Node.js Version: v22.11.0</span><br><span class="line">2025-01-01 12:00:00 - Environment: production</span><br><span class="line">2025-01-01 12:00:00 - Dependencies: axios@1.6.8, cheerio@1.0.0-rc.12</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">2025-01-01 12:00:00 - Crawler Version: 1.0.0</span><br><span class="line">2025-01-01 12:00:00 - Hostname: crawler-node-01</span><br><span class="line">2025-01-01 12:00:00 - IP Address: 10.0.0.15</span><br><span class="line">2025-01-01 12:00:00 - Node.js Version: v22.11.0</span><br><span class="line">2025-01-01 12:00:00 - Environment: production</span><br><span class="line">2025-01-01 12:00:00 - Dependencies: axios@1.6.8, cheerio@1.0.0-rc.12</span><br></pre></td></tr></table></figure></li>
 </ol>
 <h2 id="如何設計日誌內容？"><a href="#如何設計日誌內容？" class="headerlink" title="如何設計日誌內容？"></a>如何設計日誌內容？</h2><h3 id="日誌等級"><a href="#日誌等級" class="headerlink" title="日誌等級"></a>日誌等級</h3><p>除了決定「記錄什麼」，另一個關鍵是「以什麼等級記錄」。合理區分 log 等級，不僅能協助後續查詢與視覺化統計，也能減少不必要的雜訊。</p>
 <p>以下是常見的 log 等級分類及其適用情境：</p>
@@ -164,10 +231,10 @@
 <h3 id="可結構化的日誌設計原則"><a href="#可結構化的日誌設計原則" class="headerlink" title="可結構化的日誌設計原則"></a>可結構化的日誌設計原則</h3><p>在 JavaScript 實務中，在雖然 <code>console.log()</code> 是最簡單快速的輸出方式，但當我們希望日誌能被機器判讀、進行關鍵欄位過濾與分析時，「可結構化」就變得相當重要。</p>
 <p>所謂 <strong>可結構化日誌 (Structured Logging)</strong>，指的是以明確欄位命名的格式輸出 log，常見為 JSON 格式。這樣的做法能讓日誌系統 (如 Loki) 更容易針對欄位進行搜尋與 <strong>聚合 (Aggregation)</strong>，提升查詢效率與可視化價值。</p>
 <p>例如，若我們在爬取資料過程中發生了錯誤，傳統的 log 記錄方式可能會是：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">2025-01-01 12:00:00 - HTTP Error: 404 Not Found</span><br><span class="line">2025-01-01 12:00:00 - Timeout Error: Request to https://example.com/api/data timed out.</span><br><span class="line">2025-01-01 12:00:00 - Parsing Error: Failed to parse JSON response from https://example.com/api/data</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">2025-01-01 12:00:00 - HTTP Error: 404 Not Found</span><br><span class="line">2025-01-01 12:00:00 - Timeout Error: Request to https://example.com/api/data timed out.</span><br><span class="line">2025-01-01 12:00:00 - Parsing Error: Failed to parse JSON response from https://example.com/api/data</span><br></pre></td></tr></table></figure>
 
 <p>以 JSON-based 的格式呈現，會變成：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;timestamp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2025-01-01T12:00:00Z&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;error&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;HTTP Error&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://example.com/api/data&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;status_code&quot;</span><span class="punctuation">:</span> <span class="number">404</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;error&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Not Found&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;timestamp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2025-01-01T12:00:00Z&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;error&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;HTTP Error&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://example.com/api/data&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;status_code&quot;</span><span class="punctuation">:</span> <span class="number">404</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;error&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Not Found&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 
 <h2 id="使用-Grafana-Loki-收集日誌資料"><a href="#使用-Grafana-Loki-收集日誌資料" class="headerlink" title="使用 Grafana Loki 收集日誌資料"></a>使用 Grafana Loki 收集日誌資料</h2><h3 id="使用-Docker-Compose-建立環境"><a href="#使用-Docker-Compose-建立環境" class="headerlink" title="使用 Docker Compose 建立環境"></a>使用 Docker Compose 建立環境</h3><p>在以 Loki 為日誌系統的架構中，主要會扮演三種關鍵角色，分別負責日誌的儲存、傳送與呈現：</p>
 <table>
@@ -196,30 +263,30 @@
 </tbody></table>
 <p>以下提供我們將從零開始建立一份 <strong>docker-compose.yaml</strong>，目的是用來建立 <em>Loki</em> + <em>Promtail</em> + <em>Grafana</em> 的本地端測試環境，並搭配一個自定義的 Node.js 應用程式 container。</p>
 <h4 id="docker-compose-yaml-的基礎"><a href="#docker-compose-yaml-的基礎" class="headerlink" title="docker-compose.yaml 的基礎"></a>docker-compose.yaml 的基礎</h4><p>首先，我們需要建立一個 <strong>docker-compose.yaml</strong> 檔案，並在其中定義 <em>Loki</em>、<em>Promtail</em>、<em>Grafana</em> 與 Node.js 應用程式的服務。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3.8&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">loki:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">loki:</span></span><br><span class="line">    <span class="comment"># 參見下方的 loki 段落</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">promtail:</span></span><br><span class="line">    <span class="comment"># 參見下方的 promtail 段落</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">grafana:</span></span><br><span class="line">    <span class="comment"># 參見下方的 grafana 段落</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">node-app:</span></span><br><span class="line">    <span class="comment"># 參見下方的 node 應用程式段落</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3.8&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">loki:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">loki:</span></span><br><span class="line">    <span class="comment"># 參見下方的 loki 段落</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">promtail:</span></span><br><span class="line">    <span class="comment"># 參見下方的 promtail 段落</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">grafana:</span></span><br><span class="line">    <span class="comment"># 參見下方的 grafana 段落</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">node-app:</span></span><br><span class="line">    <span class="comment"># 參見下方的 node 應用程式段落</span></span><br></pre></td></tr></table></figure>
 
 <blockquote>
 <p>完整 source code: <a target="_blank" rel="noopener" href="https://github.com/wazho/grafana-loki-practice/blob/main/docker-compose.yaml">docker-compose.yaml</a></p>
 </blockquote>
 <h4 id="loki-service"><a href="#loki-service" class="headerlink" title="loki service"></a>loki service</h4><p>我們將額外的 config 資料夾掛載到容器中，並指定 Loki 的設定檔路徑。</p>
 <p>細節的設定如下：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">loki:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">grafana/loki:3.4.1</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3100:3100&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./config:/mnt/config</span> <span class="comment"># 將 config 資料夾掛載到容器中</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">-config.file=/mnt/config/loki-config.yaml</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">loki</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">loki:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">grafana/loki:3.4.1</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3100:3100&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./config:/mnt/config</span> <span class="comment"># 將 config 資料夾掛載到容器中</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">-config.file=/mnt/config/loki-config.yaml</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">loki</span></span><br></pre></td></tr></table></figure>
 
 <h4 id="promtail-service"><a href="#promtail-service" class="headerlink" title="promtail service"></a>promtail service</h4><p>我們同樣將 config 資料夾掛載到容器中，並指定 Promtail 的設定檔路徑。</p>
 <p>另外，也會將 <code>/var/run/docker.sock</code> 掛載到容器中，這是為了讓 Promtail 可以與 host 的 Docker Daemon 溝通，取得正在執行中的容器清單與相關資訊。這樣就能從 container 的 stdout 和 stderr 中擷取 log，搭配後續小節的 <strong>promtail-config.yaml</strong> 設定檔，即可完成 logs 的收集與傳送。</p>
 <p>細節的設定如下：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">promtail:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">grafana/promtail:3.4.1</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/var/run/docker.sock:/var/run/docker.sock</span> <span class="comment"># 掛載 Docker socket，讓 Promtail 可以讀取容器資訊</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./config:/mnt/config</span> <span class="comment"># 將 config 資料夾掛載到容器中</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">-config.file=/mnt/config/promtail-config.yaml</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">loki</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">promtail:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">grafana/promtail:3.4.1</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/var/run/docker.sock:/var/run/docker.sock</span> <span class="comment"># 掛載 Docker socket，讓 Promtail 可以讀取容器資訊</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./config:/mnt/config</span> <span class="comment"># 將 config 資料夾掛載到容器中</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">-config.file=/mnt/config/promtail-config.yaml</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">loki</span></span><br></pre></td></tr></table></figure>
 
 <h4 id="grafana-service"><a href="#grafana-service" class="headerlink" title="grafana service"></a>grafana service</h4><p>為了方便測試，我們將 Grafana 的帳號與密碼都設定為 <code>admin</code>。在第一次登入時，便不需要額外做設定。</p>
 <p>細節的設定如下：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">grafana:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">grafana/grafana:10.2.3</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3000:3000&quot;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GF_SECURITY_ADMIN_USER=admin</span> <span class="comment"># 將帳號設定為 admin</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GF_SECURITY_ADMIN_PASSWORD=admin</span> <span class="comment"># 將密碼設定為 admin</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">loki</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">loki</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">grafana:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">grafana/grafana:10.2.3</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3000:3000&quot;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GF_SECURITY_ADMIN_USER=admin</span> <span class="comment"># 將帳號設定為 admin</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GF_SECURITY_ADMIN_PASSWORD=admin</span> <span class="comment"># 將密碼設定為 admin</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">loki</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">loki</span></span><br></pre></td></tr></table></figure>
 
 <h4 id="應用程式-service"><a href="#應用程式-service" class="headerlink" title="應用程式 service"></a>應用程式 service</h4><p>最後，我們需要建立一個 Node.js 應用程式，並將其容器化為 <strong>node-app</strong> service。</p>
 <p>細節的設定如下：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">node-app:</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">./app</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">node-app</span></span><br><span class="line">    <span class="attr">labels:</span></span><br><span class="line">      <span class="attr">job:</span> <span class="string">&quot;node-app&quot;</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">loki</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">node-app:</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">./app</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">node-app</span></span><br><span class="line">    <span class="attr">labels:</span></span><br><span class="line">      <span class="attr">job:</span> <span class="string">&quot;node-app&quot;</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">loki</span></span><br></pre></td></tr></table></figure>
 
 <h4 id="loki-設定檔-loki-config-yaml"><a href="#loki-設定檔-loki-config-yaml" class="headerlink" title="loki 設定檔: loki-config.yaml"></a>loki 設定檔: loki-config.yaml</h4><p>在 loki service 中提到過，我們需要建立一個名為 <strong>loki-config.yaml</strong> 的設定檔，以供其使用。以下為設定內容：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">auth_enabled:</span> <span class="literal">false</span> <span class="comment"># 關閉權限驗證</span></span><br><span class="line"></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">http_listen_port:</span> <span class="number">3100</span></span><br><span class="line"></span><br><span class="line"><span class="attr">common:</span></span><br><span class="line">  <span class="attr">path_prefix:</span> <span class="string">/tmp/loki</span> <span class="comment"># ①</span></span><br><span class="line">  <span class="attr">storage:</span>               <span class="comment"># ②</span></span><br><span class="line">    <span class="attr">filesystem:</span></span><br><span class="line">      <span class="attr">chunks_directory:</span> <span class="string">/tmp/loki/chunks</span></span><br><span class="line">      <span class="attr">rules_directory:</span> <span class="string">/tmp/loki/rules</span></span><br><span class="line">  <span class="attr">replication_factor:</span> <span class="number">1</span>  <span class="comment"># ③</span></span><br><span class="line">  <span class="attr">ring:</span>                  <span class="comment"># ④</span></span><br><span class="line">    <span class="attr">kvstore:</span></span><br><span class="line">      <span class="attr">store:</span> <span class="string">inmemory</span></span><br><span class="line"></span><br><span class="line"><span class="attr">schema_config:</span></span><br><span class="line">  <span class="attr">configs:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">from:</span> <span class="number">2025-04-01</span>         <span class="comment"># ⑤</span></span><br><span class="line">      <span class="attr">store:</span> <span class="string">tsdb</span>              <span class="comment"># ⑥</span></span><br><span class="line">      <span class="attr">object_store:</span> <span class="string">filesystem</span> <span class="comment"># ⑦</span></span><br><span class="line">      <span class="attr">schema:</span> <span class="string">v13</span>              <span class="comment"># ⑧</span></span><br><span class="line">      <span class="attr">index:</span>                   <span class="comment"># ⑨</span></span><br><span class="line">        <span class="attr">prefix:</span> <span class="string">index_</span></span><br><span class="line">        <span class="attr">period:</span> <span class="string">24h</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">auth_enabled:</span> <span class="literal">false</span> <span class="comment"># 關閉權限驗證</span></span><br><span class="line"></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">http_listen_port:</span> <span class="number">3100</span></span><br><span class="line"></span><br><span class="line"><span class="attr">common:</span></span><br><span class="line">  <span class="attr">path_prefix:</span> <span class="string">/tmp/loki</span> <span class="comment"># ①</span></span><br><span class="line">  <span class="attr">storage:</span>               <span class="comment"># ②</span></span><br><span class="line">    <span class="attr">filesystem:</span></span><br><span class="line">      <span class="attr">chunks_directory:</span> <span class="string">/tmp/loki/chunks</span></span><br><span class="line">      <span class="attr">rules_directory:</span> <span class="string">/tmp/loki/rules</span></span><br><span class="line">  <span class="attr">replication_factor:</span> <span class="number">1</span>  <span class="comment"># ③</span></span><br><span class="line">  <span class="attr">ring:</span>                  <span class="comment"># ④</span></span><br><span class="line">    <span class="attr">kvstore:</span></span><br><span class="line">      <span class="attr">store:</span> <span class="string">inmemory</span></span><br><span class="line"></span><br><span class="line"><span class="attr">schema_config:</span></span><br><span class="line">  <span class="attr">configs:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">from:</span> <span class="number">2025-04-01</span>         <span class="comment"># ⑤</span></span><br><span class="line">      <span class="attr">store:</span> <span class="string">tsdb</span>              <span class="comment"># ⑥</span></span><br><span class="line">      <span class="attr">object_store:</span> <span class="string">filesystem</span> <span class="comment"># ⑦</span></span><br><span class="line">      <span class="attr">schema:</span> <span class="string">v13</span>              <span class="comment"># ⑧</span></span><br><span class="line">      <span class="attr">index:</span>                   <span class="comment"># ⑨</span></span><br><span class="line">        <span class="attr">prefix:</span> <span class="string">index_</span></span><br><span class="line">        <span class="attr">period:</span> <span class="string">24h</span></span><br></pre></td></tr></table></figure>
 
 <p><code>common</code> 各欄位說明：</p>
 <ol>
@@ -240,7 +307,7 @@
 <p>Loki 會根據這個時間點來決定使用哪個 schema 來儲存資料，而這樣的設計讓我們可以在未來的版本中，針對不同的時間範圍使用不同的 schema，來定義出不同的 config 以避免一次性重建所有資料結構。</p>
 <h4 id="promtail-設定檔-promtail-config-yaml"><a href="#promtail-設定檔-promtail-config-yaml" class="headerlink" title="promtail 設定檔: promtail-config.yaml"></a>promtail 設定檔: promtail-config.yaml</h4><p>接下來，我們需要建立一個名為 <strong>promtail-config.yaml</strong> 的設定檔，供前述的 promtail service 使用。</p>
 <p>這份設定主要針對 Docker container 的 log 擷取，以下為設定內容：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">http_listen_port:</span> <span class="number">9080</span></span><br><span class="line">  <span class="attr">grpc_listen_port:</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="attr">positions:</span> <span class="comment"># 紀錄上次讀取到的日誌位置，避免重複擷取</span></span><br><span class="line">  <span class="attr">filename:</span> <span class="string">/tmp/positions.yaml</span></span><br><span class="line"></span><br><span class="line"><span class="attr">clients:</span> <span class="comment"># 定義要將日誌推送到哪個 Loki instance</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">url:</span> <span class="string">http://loki:3100/loki/api/v1/push</span></span><br><span class="line"></span><br><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">docker</span></span><br><span class="line">    <span class="attr">docker_sd_configs:</span> <span class="comment"># ①</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">unix:///var/run/docker.sock</span></span><br><span class="line">    <span class="attr">relabel_configs:</span>   <span class="comment"># ②</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">source_labels:</span> [<span class="string">&#x27;__meta_docker_container_name&#x27;</span>]</span><br><span class="line">        <span class="attr">target_label:</span> <span class="string">&#x27;job&#x27;</span></span><br><span class="line">        <span class="attr">regex:</span> <span class="string">&#x27;/(.*)&#x27;</span></span><br><span class="line">        <span class="attr">replacement:</span> <span class="string">&#x27;$1&#x27;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">http_listen_port:</span> <span class="number">9080</span></span><br><span class="line">  <span class="attr">grpc_listen_port:</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="attr">positions:</span> <span class="comment"># 紀錄上次讀取到的日誌位置，避免重複擷取</span></span><br><span class="line">  <span class="attr">filename:</span> <span class="string">/tmp/positions.yaml</span></span><br><span class="line"></span><br><span class="line"><span class="attr">clients:</span> <span class="comment"># 定義要將日誌推送到哪個 Loki instance</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">url:</span> <span class="string">http://loki:3100/loki/api/v1/push</span></span><br><span class="line"></span><br><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">docker</span></span><br><span class="line">    <span class="attr">docker_sd_configs:</span> <span class="comment"># ①</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">unix:///var/run/docker.sock</span></span><br><span class="line">    <span class="attr">relabel_configs:</span>   <span class="comment"># ②</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">source_labels:</span> [<span class="string">&#x27;__meta_docker_container_name&#x27;</span>]</span><br><span class="line">        <span class="attr">target_label:</span> <span class="string">&#x27;job&#x27;</span></span><br><span class="line">        <span class="attr">regex:</span> <span class="string">&#x27;/(.*)&#x27;</span></span><br><span class="line">        <span class="attr">replacement:</span> <span class="string">&#x27;$1&#x27;</span></span><br></pre></td></tr></table></figure>
 
 <p><code>scrape_configs</code> 各欄位說明：</p>
 <ol>
@@ -251,7 +318,7 @@
 <p>完整範例 source code: <a target="_blank" rel="noopener" href="https://github.com/wazho/grafana-loki-practice">wazho&#x2F;grafana-loki-practice</a></p>
 </blockquote>
 <p>範例程式中，包含了 <code>config</code> 資料夾與 Node.js 應用程式的 <code>Dockerfile</code> 等，可以使用以下指令來建立範例的測試環境：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下載範例專案</span></span><br><span class="line">git <span class="built_in">clone</span> git@github.com:wazho/grafana-loki-practice.git</span><br><span class="line"><span class="comment"># 進入專案資料夾</span></span><br><span class="line"><span class="built_in">cd</span> grafana-loki-practice</span><br><span class="line"><span class="comment"># 建立 docker-compose 環境</span></span><br><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 下載範例專案</span></span><br><span class="line">git <span class="built_in">clone</span> git@github.com:wazho/grafana-loki-practice.git</span><br><span class="line"><span class="comment"># 進入專案資料夾</span></span><br><span class="line"><span class="built_in">cd</span> grafana-loki-practice</span><br><span class="line"><span class="comment"># 建立 docker-compose 環境</span></span><br><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
 
 <p>啟動完畢後，後續章節將接續目前的進度，將開始介紹如何在 Grafana 中進行日誌的可視化與監控。</p>
 <h2 id="使用-Grafana-監控爬蟲運行狀態"><a href="#使用-Grafana-監控爬蟲運行狀態" class="headerlink" title="使用 Grafana 監控爬蟲運行狀態"></a>使用 Grafana 監控爬蟲運行狀態</h2><p><img src="/2025/04/06/loki-crawler-logs/01-grafana-add-data-source-loki.png">
@@ -259,30 +326,135 @@
 <img src="/2025/04/06/loki-crawler-logs/03-grafana-create-dashboard.png">
 <img src="/2025/04/06/loki-crawler-logs/04-grafana-add-first-panel.png"></p>
 <h2 id="應用實例與延伸建議"><a href="#應用實例與延伸建議" class="headerlink" title="應用實例與延伸建議"></a>應用實例與延伸建議</h2>
-        </div>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://salmon.tw">About</a></li>
+        
+      </ul>
+    </div>
+
     
-<!-- tags -->
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E6%96%87%E6%9E%B6%E6%A7%8B"><span class="toc-number">1.</span> <span class="toc-text">本文架構</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%82%BA%E4%BB%80%E9%BA%BC%E9%9C%80%E8%A6%81%E6%97%A5%E8%AA%8C%E7%9B%A3%E6%8E%A7%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">為什麼需要日誌監控？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E9%BA%BC%E6%A8%A3%E7%9A%84%E8%B3%87%E6%96%99%E9%81%A9%E5%90%88%E6%94%B6%E9%9B%86%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">什麼樣的資料適合收集？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A8%AD%E8%A8%88%E6%97%A5%E8%AA%8C%E5%85%A7%E5%AE%B9%EF%BC%9F"><span class="toc-number">3.</span> <span class="toc-text">如何設計日誌內容？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E8%AA%8C%E7%AD%89%E7%B4%9A"><span class="toc-number">3.1.</span> <span class="toc-text">日誌等級</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%B7%E3%80%8C%E5%93%AA%E4%BA%9B%E6%97%A5%E8%AA%8C%E5%80%BC%E5%BE%97%E8%A8%98%E9%8C%84%E3%80%8D%EF%BC%9F"><span class="toc-number">3.2.</span> <span class="toc-text">如何判斷「哪些日誌值得記錄」？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E7%B5%90%E6%A7%8B%E5%8C%96%E7%9A%84%E6%97%A5%E8%AA%8C%E8%A8%AD%E8%A8%88%E5%8E%9F%E5%89%87"><span class="toc-number">3.3.</span> <span class="toc-text">可結構化的日誌設計原則</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Grafana-Loki-%E6%94%B6%E9%9B%86%E6%97%A5%E8%AA%8C%E8%B3%87%E6%96%99"><span class="toc-number">4.</span> <span class="toc-text">使用 Grafana Loki 收集日誌資料</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Docker-Compose-%E5%BB%BA%E7%AB%8B%E7%92%B0%E5%A2%83"><span class="toc-number">4.1.</span> <span class="toc-text">使用 Docker Compose 建立環境</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#docker-compose-yaml-%E7%9A%84%E5%9F%BA%E7%A4%8E"><span class="toc-number">4.1.1.</span> <span class="toc-text">docker-compose.yaml 的基礎</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#loki-service"><span class="toc-number">4.1.2.</span> <span class="toc-text">loki service</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#promtail-service"><span class="toc-number">4.1.3.</span> <span class="toc-text">promtail service</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#grafana-service"><span class="toc-number">4.1.4.</span> <span class="toc-text">grafana service</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%87%89%E7%94%A8%E7%A8%8B%E5%BC%8F-service"><span class="toc-number">4.1.5.</span> <span class="toc-text">應用程式 service</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#loki-%E8%A8%AD%E5%AE%9A%E6%AA%94-loki-config-yaml"><span class="toc-number">4.1.6.</span> <span class="toc-text">loki 設定檔: loki-config.yaml</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#promtail-%E8%A8%AD%E5%AE%9A%E6%AA%94-promtail-config-yaml"><span class="toc-number">4.1.7.</span> <span class="toc-text">promtail 設定檔: promtail-config.yaml</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AF%84%E4%BE%8B%E7%A8%8B%E5%BC%8F%E4%B8%8B%E8%BC%89"><span class="toc-number">4.1.8.</span> <span class="toc-text">範例程式下載</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Grafana-%E7%9B%A3%E6%8E%A7%E7%88%AC%E8%9F%B2%E9%81%8B%E8%A1%8C%E7%8B%80%E6%85%8B"><span class="toc-number">5.</span> <span class="toc-text">使用 Grafana 監控爬蟲運行狀態</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%87%89%E7%94%A8%E5%AF%A6%E4%BE%8B%E8%88%87%E5%BB%B6%E4%BC%B8%E5%BB%BA%E8%AD%B0"><span class="toc-number">6.</span> <span class="toc-text">應用實例與延伸建議</span></a></li></ol>
+      </div>
+    
 
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&text=利用 Grafana Loki 高效收集與監控爬蟲日誌"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&title=利用 Grafana Loki 高效收集與監控爬蟲日誌"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&is_video=false&description=利用 Grafana Loki 高效收集與監控爬蟲日誌"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=利用 Grafana Loki 高效收集與監控爬蟲日誌&body=Check out this article: https://blog.salmon.tw/2025/04/06/loki-crawler-logs/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&title=利用 Grafana Loki 高效收集與監控爬蟲日誌"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&title=利用 Grafana Loki 高效收集與監控爬蟲日誌"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&title=利用 Grafana Loki 高效收集與監控爬蟲日誌"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&title=利用 Grafana Loki 高效收集與監控爬蟲日誌"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&name=利用 Grafana Loki 高效收集與監控爬蟲日誌&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://blog.salmon.tw/2025/04/06/loki-crawler-logs/&t=利用 Grafana Loki 高效收集與監控爬蟲日誌"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
 </div>
-                <div class="footer">
-    <span>Copyright © <script>document.write(new Date().getFullYear())</script> <a target="_blank" rel="noopener" href="https://salmon.tw">Salmon</a></span>
-    <!-- <span>Powered by <a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> with <a target="_blank" rel="noopener" href="https:///imzl.com/zenmind">ZenMind</a></span> -->
-</div>
 
-<link rel="stylesheet" href="/css/a11y-dark.min.css">
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2012-2025
+    Ze-Hao Wang (Salmon)
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://salmon.tw">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
 
 
-<script src="/js/highlight.min.js"></script>
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
 
 
-<script src="/js/highlightjs-line-numbers.js"></script>
+    <!-- jquery -->
 
-<script>
-    hljs.initHighlightingOnLoad();
-    hljs.initLineNumbersOnLoad();
-</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
 
-            </div>
-        </div>
-    </body>
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
 </html>

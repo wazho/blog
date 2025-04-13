@@ -1,23 +1,17 @@
 <!DOCTYPE html>
-<html>
-    <head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
-  <meta name="robots" content="index, follow">
-  <!-- title -->
-  
-    
-  <title>註冊 GitLab Runner: Salmon</title>
-    
-  
-  
-  <!-- open graph -->
-  <meta name="description" content="若機器尚未安裝 GitLab 請參考 GitLab 官方安裝說明。 GitLab Runner 是基於 GitLab 的子服務，若尚未安裝 GitLab Runner 請參考 GitLab Runner 安裝說明。倘若不確定是否已安裝 GitLab Runner，可於終端機輸入以下指令來檢查。 12# 查看 GitLab Runner 版本。$ gitlab-runner -v  且接下來的步驟將">
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="若機器尚未安裝 GitLab 請參考 GitLab 官方安裝說明。 GitLab Runner 是基於 GitLab 的子服務，若尚未安裝 GitLab Runner 請參考 GitLab Runner 安裝說明。倘若不確定是否已安裝 GitLab Runner，可於終端機輸入以下指令來檢查。 # 查看 GitLab Runner 版本。$ gitlab-runner -v  且接下來的步驟將會利">
 <meta property="og:type" content="article">
 <meta property="og:title" content="註冊 GitLab Runner">
 <meta property="og:url" content="https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/index.html">
 <meta property="og:site_name" content="Salmon">
-<meta property="og:description" content="若機器尚未安裝 GitLab 請參考 GitLab 官方安裝說明。 GitLab Runner 是基於 GitLab 的子服務，若尚未安裝 GitLab Runner 請參考 GitLab Runner 安裝說明。倘若不確定是否已安裝 GitLab Runner，可於終端機輸入以下指令來檢查。 12# 查看 GitLab Runner 版本。$ gitlab-runner -v  且接下來的步驟將">
+<meta property="og:description" content="若機器尚未安裝 GitLab 請參考 GitLab 官方安裝說明。 GitLab Runner 是基於 GitLab 的子服務，若尚未安裝 GitLab Runner 請參考 GitLab Runner 安裝說明。倘若不確定是否已安裝 GitLab Runner，可於終端機輸入以下指令來檢查。 # 查看 GitLab Runner 版本。$ gitlab-runner -v  且接下來的步驟將會利">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="http://hackmd.webpat.co/uploads/upload_05ed19f569d1335ce4629c43cdd9925c.png">
 <meta property="og:image" content="http://hackmd.webpat.co/uploads/upload_bdb4e5a91dac96f2e4e023a2e96c863a.png">
@@ -28,76 +22,151 @@
 <meta property="article:tag" content="node.js, back-end, full-stack">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://hackmd.webpat.co/uploads/upload_05ed19f569d1335ce4629c43cdd9925c.png">
-  <!-- canonical -->
-  
-  <link rel="canonical" href="https://blog.salmon.tw/2018/05/08/註冊 GitLab Runner/">
-  
-  <!-- Favicon -->
-  <link rel="shortcut icon" href="/img/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
-  <!-- CSS -->
-  
-<link rel="stylesheet" href="/css/reset.css">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>註冊 GitLab Runner</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
 
-  
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
 <link rel="stylesheet" href="/css/style.css">
 
-  
-<link rel="stylesheet" href="/css/markdown.css">
-
-  
-<link rel="stylesheet" href="/css/fonts.css">
-
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
 <meta name="generator" content="Hexo 7.3.0"></head>
 
-    <body>
-        <div class="paper">
-            <div class="paper-main">
-                
-                    <div class="post-header">
-    <a class="logo" href="/">Salmon</a>
-    <!-- <div class="logo"><a href="/" title="Len"><img src="/img/logo.svg" alt="Len" aria-label="logo" height="20"></a></div> -->
-        <ul class="nav">
-            
-            <li><a href="/">Home</a></li>
-            
-            <li><a target="_blank" rel="noopener" href="https://salmon.tw">About</a></li>
-            
-            <li><a href="/archives">Archives</a></li>
-            
-        </ul>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://salmon.tw">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2018/11/14/Elastic%20Stack%20-%20Heartbeat/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2017/11/21/Rancher%20%E8%A8%AD%E5%AE%9A%20Docker%20registries/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&text=註冊 GitLab Runner"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&title=註冊 GitLab Runner"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&is_video=false&description=註冊 GitLab Runner"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=註冊 GitLab Runner&body=Check out this article: https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&title=註冊 GitLab Runner"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&title=註冊 GitLab Runner"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&title=註冊 GitLab Runner"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&title=註冊 GitLab Runner"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&name=註冊 GitLab Runner&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&t=註冊 GitLab Runner"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
 
-
-    </a>
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81Docker-container-runner"><span class="toc-number">1.</span> <span class="toc-text">一、Docker container runner</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%BB%BA%E7%AB%8B-container"><span class="toc-number">1.1.</span> <span class="toc-text">1. 建立 container</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%80%B2%E5%85%A5-runner-%E5%88%97%E8%A1%A8"><span class="toc-number">1.2.</span> <span class="toc-text">2. 進入 runner 列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%A8%BB%E5%86%8A-runner"><span class="toc-number">1.3.</span> <span class="toc-text">3. 註冊 runner</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%A8%BB%E5%86%8A%E5%AE%8C%E6%88%90"><span class="toc-number">1.4.</span> <span class="toc-text">4. 註冊完成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1%E5%81%9A%E5%AE%8C%E6%AD%A5%E9%A9%9F-1-3"><span class="toc-number">1.5.</span> <span class="toc-text">一次做完步驟 1~3</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Shell-runner"><span class="toc-number">2.</span> <span class="toc-text">二、Shell runner</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%80%B2%E5%85%A5-runner-%E5%88%97%E8%A1%A8"><span class="toc-number">2.1.</span> <span class="toc-text">1. 進入 runner 列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%A8%BB%E5%86%8A-runner"><span class="toc-number">2.2.</span> <span class="toc-text">2. 註冊 runner</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%B0%87-gitlab-runner-%E5%8A%A0%E5%85%A5%E8%87%B3-docker-%E7%BE%A4%E7%B5%84"><span class="toc-number">2.3.</span> <span class="toc-text">3. 將 gitlab-runner 加入至 docker 群組</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%AA%A2%E6%9F%A5-gitlab-runner-%E6%98%AF%E5%90%A6%E6%9C%89%E6%AC%8A%E9%99%90%E4%BD%BF%E7%94%A8-docker"><span class="toc-number">2.4.</span> <span class="toc-text">4. 檢查 gitlab-runner 是否有權限使用 docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%A8%BB%E5%86%8A%E5%AE%8C%E6%88%90"><span class="toc-number">2.5.</span> <span class="toc-text">5. 註冊完成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%BC-GitLab-CI-%E4%BD%BF%E7%94%A8-docker"><span class="toc-number">2.6.</span> <span class="toc-text">於 GitLab CI 使用 docker</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Q-A"><span class="toc-number">3.</span> <span class="toc-text">Q&amp;A</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%8C%AF%E8%AA%A4%E8%A8%8A%E6%81%AF-x509-certificate-signed-by-unknown-authority"><span class="toc-number">3.1.</span> <span class="toc-text">1. 錯誤訊息 - x509: certificate signed by unknown authority</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%A1%88"><span class="toc-number">3.1.1.</span> <span class="toc-text">解決方案</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%8C%AF%E8%AA%A4%E8%A8%8A%E6%81%AF-failed-to-get-default-registry-endpoint-from-daemon"><span class="toc-number">3.2.</span> <span class="toc-text">2. 錯誤訊息 - failed to get default registry endpoint from daemon</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%A1%88-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">解決方案</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Pipeline-jobs-%E7%84%A1%E6%B3%95%E5%85%B1%E4%BA%AB-cache"><span class="toc-number">3.3.</span> <span class="toc-text">3. Pipeline jobs 無法共享 cache</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%A1%88-2"><span class="toc-number">3.3.1.</span> <span class="toc-text">解決方案</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%8C%AF%E8%AA%A4%E8%A8%8A%E6%81%AF-Uploading-artifacts-to-coordinator-too-large-archive"><span class="toc-number">3.4.</span> <span class="toc-text">4. 錯誤訊息 - Uploading artifacts to coordinator... too large archive</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%A1%88-3"><span class="toc-number">3.4.1.</span> <span class="toc-text">解決方案</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E5%AE%83%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%A1%88"><span class="toc-number">3.4.2.</span> <span class="toc-text">其它解決方案</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="toc-number">4.</span> <span class="toc-text">參考資料</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E9%97%9C%E5%AF%A6%E9%A9%97"><span class="toc-number">5.</span> <span class="toc-text">相關實驗</span></a></li></ol>
+      </div>
+    
+  </span>
 </div>
 
-                
-                <div class="post-main">
     
-        <div class="post-main-title">
-            註冊 GitLab Runner
-        </div>
-        <div class="post-meta">
-            2018-05-08 ｜ 
-            
-        </div>
-        <!-- 圆角分类 -->
-        <!-- <div class="tags"> -->
-            <!--  -->
-        <!-- </div> -->
-        <div class="post-md">
-            <p>若機器尚未安裝 GitLab 請參考 <a target="_blank" rel="noopener" href="https://about.gitlab.com/installation/" title="GitLab Installation">GitLab 官方安裝說明</a>。</p>
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        註冊 GitLab Runner
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Ze-Hao Wang (Salmon)</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-05-08T12:00:00.000Z" class="dt-published" itemprop="datePublished">2018-05-08</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>若機器尚未安裝 GitLab 請參考 <a target="_blank" rel="noopener" href="https://about.gitlab.com/installation/" title="GitLab Installation">GitLab 官方安裝說明</a>。</p>
 <p>GitLab Runner 是基於 GitLab 的子服務，若尚未安裝 GitLab Runner 請參考 <a target="_blank" rel="noopener" href="https://docs.gitlab.com/runner/install/linux-repository.html" title="Install GitLab Runner using the official GitLab repositories">GitLab Runner 安裝說明</a>。倘若不確定是否已安裝 GitLab Runner，可於終端機輸入以下指令來檢查。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看 GitLab Runner 版本。</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">gitlab-runner -v</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看 GitLab Runner 版本。</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">gitlab-runner -v</span></span><br></pre></td></tr></table></figure>
 
 <p>且接下來的步驟將會利用 Docker 進行 GitLab 的 CI 流程，若尚未安裝 Docker 請參考 <a target="_blank" rel="noopener" href="https://docs.docker.com/engine/installation/" title="Install Docker">Docker 安裝說明</a>。倘若不確定是否已安裝 Docker，可於終端機輸入以下指令來檢查。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看 Docker 版本。</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker version</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看 Docker 版本。</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker version</span></span><br></pre></td></tr></table></figure>
 
 <br />
 
 <h2 id="一、Docker-container-runner"><a href="#一、Docker-container-runner" class="headerlink" title="一、Docker container runner"></a>一、Docker container runner</h2><p>採用 docker container 的方式執行 GitLab runner。</p>
 <h3 id="1-建立-container"><a href="#1-建立-container" class="headerlink" title="1. 建立 container"></a>1. 建立 container</h3><p>使用官方影像 <a target="_blank" rel="noopener" href="https://hub.docker.com/r/gitlab/gitlab-runner/">gitlab&#x2F;gitlab-runner</a> 建立 container。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker run -d --name gitlab-runner \</span></span><br><span class="line"><span class="language-bash">    -v /var/run/docker.sock:/var/run/docker.sock \</span></span><br><span class="line"><span class="language-bash">    -v /srv/gitlab-runner/config:/etc/gitlab-runner \</span></span><br><span class="line"><span class="language-bash">    --restart unless-stopped \</span></span><br><span class="line"><span class="language-bash">    gitlab/gitlab-runner:latest</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker run -d --name gitlab-runner \</span></span><br><span class="line"><span class="language-bash">    -v /var/run/docker.sock:/var/run/docker.sock \</span></span><br><span class="line"><span class="language-bash">    -v /srv/gitlab-runner/config:/etc/gitlab-runner \</span></span><br><span class="line"><span class="language-bash">    --restart unless-stopped \</span></span><br><span class="line"><span class="language-bash">    gitlab/gitlab-runner:latest</span></span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>HOST 路徑 - <code>/var/run/docker.sock</code><ul>
@@ -119,10 +188,10 @@
 <p>進入 Runners 界面後，找到下圖之段落，高亮兩處於稍後註冊 runner 會需要鍵入的兩項資訊 <strong>GitLab URL</strong> 與 <strong>registration token</strong>。</p>
 <p><img src="http://hackmd.webpat.co/uploads/upload_05ed19f569d1335ce4629c43cdd9925c.png"></p>
 <h3 id="3-註冊-runner"><a href="#3-註冊-runner" class="headerlink" title="3. 註冊 runner"></a>3. 註冊 runner</h3><p>進入方才建立的 container。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker <span class="built_in">exec</span> -it gitlab-runner /bin/bash</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker <span class="built_in">exec</span> -it gitlab-runner /bin/bash</span></span><br></pre></td></tr></table></figure>
 
 <p>進入後執行 <strong>gitlab-runner register</strong> 程式，並提供 runner 的相關資訊，description 欄位可依需求修改。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">於 container, gitlab/gitlab-runner</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">gitlab-runner register -n \</span></span><br><span class="line"><span class="language-bash">    --url &lt;你的 GitLab URL&gt; \</span></span><br><span class="line"><span class="language-bash">    --registration-token &lt;你的 registration token&gt; \</span></span><br><span class="line"><span class="language-bash">    --executor docker \</span></span><br><span class="line"><span class="language-bash">    --docker-image docker:latest \</span></span><br><span class="line"><span class="language-bash">    --description <span class="string">&quot;Docker Runner&quot;</span></span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">於 container, gitlab/gitlab-runner</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">gitlab-runner register -n \</span></span><br><span class="line"><span class="language-bash">    --url &lt;你的 GitLab URL&gt; \</span></span><br><span class="line"><span class="language-bash">    --registration-token &lt;你的 registration token&gt; \</span></span><br><span class="line"><span class="language-bash">    --executor docker \</span></span><br><span class="line"><span class="language-bash">    --docker-image docker:latest \</span></span><br><span class="line"><span class="language-bash">    --description <span class="string">&quot;Docker Runner&quot;</span></span></span><br></pre></td></tr></table></figure>
 
 <table>
 <thead>
@@ -155,7 +224,7 @@
 <h3 id="4-註冊完成"><a href="#4-註冊完成" class="headerlink" title="4. 註冊完成"></a>4. 註冊完成</h3><p>註冊完成後，該 container 會與 GitLab 持續保持連線，若需要檢查相關資訊，能夠查看該 container 的 logs 資訊。</p>
 <p>設定檔依前述 volume 路徑，預設檔案路徑為：<code>/srv/gitlab-runner/config/config.toml</code>。倘若該主機欲配置複數 runners，請務必調整路徑以避免重疊覆寫。</p>
 <p>設定完成的 runner 能夠在 GitLab runners 列表中所見。</p>
-<h3 id="一次做完步驟-1-3"><a href="#一次做完步驟-1-3" class="headerlink" title="一次做完步驟 1~3"></a>一次做完步驟 1~3</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker run --<span class="built_in">rm</span> -it -v /path/to/config:/etc/gitlab-runner --name gitlab-runner gitlab/gitlab-runner register \</span></span><br><span class="line"><span class="language-bash">  --non-interactive \</span></span><br><span class="line"><span class="language-bash">  --url &lt;你的 GitLab URL&gt; \</span></span><br><span class="line"><span class="language-bash">  --registration-token &lt;你的 registration token&gt; \</span></span><br><span class="line"><span class="language-bash">  --executor <span class="string">&quot;docker&quot;</span> \</span></span><br><span class="line"><span class="language-bash">  --docker-image docker:latest \</span></span><br><span class="line"><span class="language-bash">  --description <span class="string">&quot;Docker Runner&quot;</span> \</span></span><br></pre></td></tr></table></figure>
+<h3 id="一次做完步驟-1-3"><a href="#一次做完步驟-1-3" class="headerlink" title="一次做完步驟 1~3"></a>一次做完步驟 1~3</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker run --<span class="built_in">rm</span> -it -v /path/to/config:/etc/gitlab-runner --name gitlab-runner gitlab/gitlab-runner register \</span></span><br><span class="line"><span class="language-bash">  --non-interactive \</span></span><br><span class="line"><span class="language-bash">  --url &lt;你的 GitLab URL&gt; \</span></span><br><span class="line"><span class="language-bash">  --registration-token &lt;你的 registration token&gt; \</span></span><br><span class="line"><span class="language-bash">  --executor <span class="string">&quot;docker&quot;</span> \</span></span><br><span class="line"><span class="language-bash">  --docker-image docker:latest \</span></span><br><span class="line"><span class="language-bash">  --description <span class="string">&quot;Docker Runner&quot;</span> \</span></span><br></pre></td></tr></table></figure>
 
 <br />
 
@@ -163,15 +232,15 @@
 <h2 id="二、Shell-runner"><a href="#二、Shell-runner" class="headerlink" title="二、Shell runner"></a>二、Shell runner</h2><p>直接使用指定 Host 執行 GitLab runner 的方式。</p>
 <h3 id="1-進入-runner-列表"><a href="#1-進入-runner-列表" class="headerlink" title="1. 進入 runner 列表"></a>1. 進入 runner 列表</h3><p>同前章節之 <a href="#2-%E9%80%B2%E5%85%A5-runner-%E5%88%97%E8%A1%A8">進入 runner 列表</a>。</p>
 <h3 id="2-註冊-runner"><a href="#2-註冊-runner" class="headerlink" title="2. 註冊 runner"></a>2. 註冊 runner</h3><p>在終端機輸入以下指令，並將前一步驟的 <strong>GitLab URL</strong> 與 <strong>registration token</strong> 替換之，而 description 欄位可依需求修改。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">gitlab-runner 是安裝 GitLab 同時會附帶的程式</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">sudo</span> gitlab-runner register -n \</span></span><br><span class="line"><span class="language-bash">    --url &lt;你的 GitLab URL&gt; \</span></span><br><span class="line"><span class="language-bash">    --registration-token &lt;你的 registration token&gt; \</span></span><br><span class="line"><span class="language-bash">    --executor shell \</span></span><br><span class="line"><span class="language-bash">    --description <span class="string">&quot;Shell Runner&quot;</span></span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">gitlab-runner 是安裝 GitLab 同時會附帶的程式</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">sudo</span> gitlab-runner register -n \</span></span><br><span class="line"><span class="language-bash">    --url &lt;你的 GitLab URL&gt; \</span></span><br><span class="line"><span class="language-bash">    --registration-token &lt;你的 registration token&gt; \</span></span><br><span class="line"><span class="language-bash">    --executor shell \</span></span><br><span class="line"><span class="language-bash">    --description <span class="string">&quot;Shell Runner&quot;</span></span></span><br></pre></td></tr></table></figure>
 
-<h3 id="3-將-gitlab-runner-加入至-docker-群組"><a href="#3-將-gitlab-runner-加入至-docker-群組" class="headerlink" title="3. 將 gitlab-runner 加入至 docker 群組"></a>3. 將 gitlab-runner 加入至 docker 群組</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">sudo</span> usermod -aG docker gitlab-runner</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-將-gitlab-runner-加入至-docker-群組"><a href="#3-將-gitlab-runner-加入至-docker-群組" class="headerlink" title="3. 將 gitlab-runner 加入至 docker 群組"></a>3. 將 gitlab-runner 加入至 docker 群組</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">sudo</span> usermod -aG docker gitlab-runner</span></span><br></pre></td></tr></table></figure>
 
 <ul>
 <li><strong>-a (--append)</strong>：添增指定用戶至指定群組，必須與 <code>-G</code> 一併使用。</li>
 <li><strong>-G (--groups)</strong>：一新群組。</li>
 </ul>
-<h3 id="4-檢查-gitlab-runner-是否有權限使用-docker"><a href="#4-檢查-gitlab-runner-是否有權限使用-docker" class="headerlink" title="4. 檢查 gitlab-runner 是否有權限使用 docker"></a>4. 檢查 gitlab-runner 是否有權限使用 docker</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">sudo</span> -H -u gitlab-runner docker info</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-檢查-gitlab-runner-是否有權限使用-docker"><a href="#4-檢查-gitlab-runner-是否有權限使用-docker" class="headerlink" title="4. 檢查 gitlab-runner 是否有權限使用 docker"></a>4. 檢查 gitlab-runner 是否有權限使用 docker</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">sudo</span> -H -u gitlab-runner docker info</span></span><br></pre></td></tr></table></figure>
 
 <ul>
 <li><strong>-H (--set-home)</strong>：將環境變數 <code>$HOME</code> 切換到當前用戶。</li>
@@ -185,14 +254,14 @@
 <h3 id="於-GitLab-CI-使用-docker"><a href="#於-GitLab-CI-使用-docker" class="headerlink" title="於 GitLab CI 使用 docker"></a>於 GitLab CI 使用 docker</h3><p>完成前述設定（<a href="#%E4%B8%80%E3%80%81docker-container-runner">docker container runner</a> 或 <a href="#%E4%BA%8C%E3%80%81shell-runner">shell runner</a>）後，便可於 <code>.gitlab-ci.yml</code> 中進行 docker 指令的調用，便於 push 該 commit 後，GitLab CI 的 runner 將能夠取用 docker 的資源。</p>
 <p><img src="http://hackmd.webpat.co/uploads/upload_9a8c47ad7dbda608e773cb095d9df146.png"></p>
 <p>以下為上圖之 <code>.gitlab-ci.yml</code> 設定：</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">image:</span> <span class="string">node:8.4.0</span></span><br><span class="line"></span><br><span class="line"><span class="attr">stages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deploy</span></span><br><span class="line"></span><br><span class="line"><span class="attr">deploy_job:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">docker:latest</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Deploy okay.&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">image:</span> <span class="string">node:8.4.0</span></span><br><span class="line"></span><br><span class="line"><span class="attr">stages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deploy</span></span><br><span class="line"></span><br><span class="line"><span class="attr">deploy_job:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">docker:latest</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Deploy okay.&quot;</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="Q-A"><a href="#Q-A" class="headerlink" title="Q&amp;A"></a>Q&amp;A</h2><h3 id="1-錯誤訊息-x509-certificate-signed-by-unknown-authority"><a href="#1-錯誤訊息-x509-certificate-signed-by-unknown-authority" class="headerlink" title="1. 錯誤訊息 - x509: certificate signed by unknown authority"></a>1. 錯誤訊息 - x509: certificate signed by unknown authority</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Error response from daemon: Missing key ca.key for client certificate ca.cert. </span><br><span class="line">Note that CA certificates should use the extension .crt.</span><br><span class="line"></span><br><span class="line">ERROR: Preparation failed: Error response from daemon: Get https://gitlab.ltc:4567/v1/_ping: x509: certificate signed by unknown authority</span><br></pre></td></tr></table></figure>
+<h2 id="Q-A"><a href="#Q-A" class="headerlink" title="Q&amp;A"></a>Q&amp;A</h2><h3 id="1-錯誤訊息-x509-certificate-signed-by-unknown-authority"><a href="#1-錯誤訊息-x509-certificate-signed-by-unknown-authority" class="headerlink" title="1. 錯誤訊息 - x509: certificate signed by unknown authority"></a>1. 錯誤訊息 - x509: certificate signed by unknown authority</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Error response from daemon: Missing key ca.key for client certificate ca.cert. </span><br><span class="line">Note that CA certificates should use the extension .crt.</span><br><span class="line"></span><br><span class="line">ERROR: Preparation failed: Error response from daemon: Get https://gitlab.ltc:4567/v1/_ping: x509: certificate signed by unknown authority</span><br></pre></td></tr></table></figure>
 
 <h4 id="解決方案"><a href="#解決方案" class="headerlink" title="解決方案"></a>解決方案</h4><ul>
 <li>下載 gitlab.ltc 憑證, 放到裝有 gitlab-runner container 的 host <code>/etc/docker/certs.d/gitlab.ltc:4567/ca.crt</code></li>
 </ul>
-<h3 id="2-錯誤訊息-failed-to-get-default-registry-endpoint-from-daemon"><a href="#2-錯誤訊息-failed-to-get-default-registry-endpoint-from-daemon" class="headerlink" title="2. 錯誤訊息 - failed to get default registry endpoint from daemon"></a>2. 錯誤訊息 - failed to get default registry endpoint from daemon</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_SERVER</span><br><span class="line">WARNING! Using --password via the CLI is insecure. Use --password-stdin.</span><br><span class="line">Warning: failed to get default registry endpoint from daemon (Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?). Using system default: https://index.docker.io/v1/</span><br><span class="line">Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?</span><br><span class="line">ERROR: Job failed: exit code 1</span><br></pre></td></tr></table></figure>
+<h3 id="2-錯誤訊息-failed-to-get-default-registry-endpoint-from-daemon"><a href="#2-錯誤訊息-failed-to-get-default-registry-endpoint-from-daemon" class="headerlink" title="2. 錯誤訊息 - failed to get default registry endpoint from daemon"></a>2. 錯誤訊息 - failed to get default registry endpoint from daemon</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_SERVER</span><br><span class="line">WARNING! Using --password via the CLI is insecure. Use --password-stdin.</span><br><span class="line">Warning: failed to get default registry endpoint from daemon (Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?). Using system default: https://index.docker.io/v1/</span><br><span class="line">Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?</span><br><span class="line">ERROR: Job failed: exit code 1</span><br></pre></td></tr></table></figure>
 
 <h4 id="解決方案-1"><a href="#解決方案-1" class="headerlink" title="解決方案"></a>解決方案</h4><ul>
 <li><p>修改 gitlab-runner config <code>config.toml</code>, 在 <code>[runners.docker]</code> 區段的 volumes 補上 <code>/var/run/docker.sock:/var/run/docker.sock</code></p>
@@ -200,28 +269,28 @@
 <li><p><code>config.toml</code> 設定如下</p>
 </li>
 </ul>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">concurrent</span> <span class="string">=</span> <span class="number">4</span></span><br><span class="line"><span class="string">check_interval</span> <span class="string">=</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line">[[<span class="string">runners</span>]]</span><br><span class="line">  <span class="string">name</span> <span class="string">=</span> <span class="string">&quot;Docker Runner&quot;</span></span><br><span class="line">  <span class="string">url</span> <span class="string">=</span> <span class="string">&quot;https://gitlab.webpat.co/&quot;</span></span><br><span class="line">  <span class="string">token</span> <span class="string">=</span> <span class="string">&quot;d05b450b6b4446a75b6231284e4a7a&quot;</span></span><br><span class="line">  <span class="string">executor</span> <span class="string">=</span> <span class="string">&quot;docker&quot;</span></span><br><span class="line">  [<span class="string">runners.docker</span>]</span><br><span class="line">    <span class="string">tls_verify</span> <span class="string">=</span> <span class="literal">false</span></span><br><span class="line">    <span class="string">image</span> <span class="string">=</span> <span class="string">&quot;docker:latest&quot;</span></span><br><span class="line">    <span class="string">privileged</span> <span class="string">=</span> <span class="literal">false</span></span><br><span class="line">    <span class="string">disable_cache</span> <span class="string">=</span> <span class="literal">false</span></span><br><span class="line">    <span class="string">volumes</span> <span class="string">=</span> [<span class="string">&quot;/cache&quot;</span>, <span class="string">&quot;/var/run/docker.sock:/var/run/docker.sock&quot;</span>]</span><br><span class="line">    <span class="string">shm_size</span> <span class="string">=</span> <span class="number">0</span></span><br><span class="line">  [<span class="string">runners.cache</span>]</span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">concurrent</span> <span class="string">=</span> <span class="number">4</span></span><br><span class="line"><span class="string">check_interval</span> <span class="string">=</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line">[[<span class="string">runners</span>]]</span><br><span class="line">  <span class="string">name</span> <span class="string">=</span> <span class="string">&quot;Docker Runner&quot;</span></span><br><span class="line">  <span class="string">url</span> <span class="string">=</span> <span class="string">&quot;https://gitlab.webpat.co/&quot;</span></span><br><span class="line">  <span class="string">token</span> <span class="string">=</span> <span class="string">&quot;d05b450b6b4446a75b6231284e4a7a&quot;</span></span><br><span class="line">  <span class="string">executor</span> <span class="string">=</span> <span class="string">&quot;docker&quot;</span></span><br><span class="line">  [<span class="string">runners.docker</span>]</span><br><span class="line">    <span class="string">tls_verify</span> <span class="string">=</span> <span class="literal">false</span></span><br><span class="line">    <span class="string">image</span> <span class="string">=</span> <span class="string">&quot;docker:latest&quot;</span></span><br><span class="line">    <span class="string">privileged</span> <span class="string">=</span> <span class="literal">false</span></span><br><span class="line">    <span class="string">disable_cache</span> <span class="string">=</span> <span class="literal">false</span></span><br><span class="line">    <span class="string">volumes</span> <span class="string">=</span> [<span class="string">&quot;/cache&quot;</span>, <span class="string">&quot;/var/run/docker.sock:/var/run/docker.sock&quot;</span>]</span><br><span class="line">    <span class="string">shm_size</span> <span class="string">=</span> <span class="number">0</span></span><br><span class="line">  [<span class="string">runners.cache</span>]</span><br></pre></td></tr></table></figure>
 
 
 <h3 id="3-Pipeline-jobs-無法共享-cache"><a href="#3-Pipeline-jobs-無法共享-cache" class="headerlink" title="3. Pipeline jobs 無法共享 cache"></a>3. Pipeline jobs 無法共享 cache</h3><p>當 runner 的 concurrent 配置大於 1 時，會發生此情形，導致後續 job 無法正確 pull 先前的 cache。</p>
 <p>而發生錯誤的前提是：在一 pipeline 中出現前後 job 被指派給 runner 不同的 concurrent。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 出現在 pipeline - job installation</span><br><span class="line">Running on runner-d05b450b-project-107-concurrent-1 via 860ed6055b41...</span><br><span class="line"></span><br><span class="line"># 出現在 pipeline - job test</span><br><span class="line">Running on runner-d05b450b-project-107-concurrent-0 via 860ed6055b41...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 出現在 pipeline - job installation</span><br><span class="line">Running on runner-d05b450b-project-107-concurrent-1 via 860ed6055b41...</span><br><span class="line"></span><br><span class="line"># 出現在 pipeline - job test</span><br><span class="line">Running on runner-d05b450b-project-107-concurrent-0 via 860ed6055b41...</span><br></pre></td></tr></table></figure>
 
 <h4 id="解決方案-2"><a href="#解決方案-2" class="headerlink" title="解決方案"></a>解決方案</h4><p>透過 artifacts 達到相同的效果，首先修改相關 repo 的 <code> .gitlab-ci.yml</code></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 將 installation 階段的產物作為 artifacts</span></span><br><span class="line"><span class="attr">installation:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">artifacts:</span> <span class="comment"># 後續 jobs 將會繼承該 path 的檔案</span></span><br><span class="line">    <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">node_modules/</span></span><br><span class="line">    <span class="attr">expire_in:</span> <span class="number">1</span> <span class="string">day</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="comment"># ....</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 將 installation 階段的產物作為 artifacts</span></span><br><span class="line"><span class="attr">installation:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">artifacts:</span> <span class="comment"># 後續 jobs 將會繼承該 path 的檔案</span></span><br><span class="line">    <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">node_modules/</span></span><br><span class="line">    <span class="attr">expire_in:</span> <span class="number">1</span> <span class="string">day</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="comment"># ....</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="4-錯誤訊息-Uploading-artifacts-to-coordinator-too-large-archive"><a href="#4-錯誤訊息-Uploading-artifacts-to-coordinator-too-large-archive" class="headerlink" title="4. 錯誤訊息 - Uploading artifacts to coordinator... too large archive"></a>4. 錯誤訊息 - Uploading artifacts to coordinator... too large archive</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">完整訊息</span></span><br><span class="line">ERROR: Uploading artifacts to coordinator... too large archive    id=1 token=****</span><br><span class="line">FATAL: Too large</span><br></pre></td></tr></table></figure>
+<h3 id="4-錯誤訊息-Uploading-artifacts-to-coordinator-too-large-archive"><a href="#4-錯誤訊息-Uploading-artifacts-to-coordinator-too-large-archive" class="headerlink" title="4. 錯誤訊息 - Uploading artifacts to coordinator... too large archive"></a>4. 錯誤訊息 - Uploading artifacts to coordinator... too large archive</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">完整訊息</span></span><br><span class="line">ERROR: Uploading artifacts to coordinator... too large archive    id=1 token=****</span><br><span class="line">FATAL: Too large</span><br></pre></td></tr></table></figure>
 
 <h4 id="解決方案-3"><a href="#解決方案-3" class="headerlink" title="解決方案"></a>解決方案</h4><ul>
 <li><a target="_blank" rel="noopener" href="https://gitlab.webpat.co/help/user/admin_area/settings/continuous_integration#maximum-artifacts-size">https://gitlab.webpat.co/help/user/admin_area/settings/continuous_integration#maximum-artifacts-size</a></li>
 </ul>
 <p>因 artifacts 由 runner 產出，再透過 HTTP 傳遞給 GitLab 進行儲存及管理。便需要更改 <strong>(a)</strong> artifacts 本身的檔案上限 與 <strong>(b)</strong> web server (nginx) 能夠接受的檔案大小。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">路徑：/etc/gitlab/gitlab.rb</span></span><br><span class="line">nginx[&#x27;client_max_body_size&#x27;] = &#x27;1024m&#x27;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">路徑：/var/opt/gitlab/nginx/conf/gitlab-http.conf</span></span><br><span class="line">client_max_body_size 1024m;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">路徑：/etc/gitlab/gitlab.rb</span></span><br><span class="line">nginx[&#x27;client_max_body_size&#x27;] = &#x27;1024m&#x27;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">路徑：/var/opt/gitlab/nginx/conf/gitlab-http.conf</span></span><br><span class="line">client_max_body_size 1024m;</span><br></pre></td></tr></table></figure>
 
 <p>最後，重新啟動 GitLab 以套用新設定。</p>
 <h4 id="其它解決方案"><a href="#其它解決方案" class="headerlink" title="其它解決方案"></a>其它解決方案</h4><p>若上述解決方案無法達成目的，有可能是 GitLab 服務本身在受理服務前已被 Proxy 所代理。</p>
 <p>在不更動 Proxy 的前提下，應當使 runner 與 GitLab 之間的溝通採內網形式。相關的設定能夠在 <code>config.toml</code> 中找到。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[[<span class="string">runners</span>]]</span><br><span class="line">  <span class="string">name</span> <span class="string">=</span> <span class="string">&quot;Docker Runner&quot;</span></span><br><span class="line">  <span class="comment"># 外部網址 https://gitlab.webpat.co/</span></span><br><span class="line">  <span class="string">url</span> <span class="string">=</span> <span class="string">&quot;https://gitlab.ltc/&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line">[[<span class="string">runners</span>]]</span><br><span class="line">  <span class="string">name</span> <span class="string">=</span> <span class="string">&quot;Docker Runner&quot;</span></span><br><span class="line">  <span class="comment"># 外部網址 https://gitlab.webpat.co/</span></span><br><span class="line">  <span class="string">url</span> <span class="string">=</span> <span class="string">&quot;https://gitlab.ltc/&quot;</span></span><br></pre></td></tr></table></figure>
 
 <blockquote>
 <p>附註，能夠透過 <code>docker logs gitlab-runner</code> 來觀察目前的配置是否正確，若無訊息輸出，表正常設定。</p>
@@ -233,30 +302,135 @@
 <a target="_blank" rel="noopener" href="https://about.gitlab.com/installation/" title="GitLab Installation">GitLab Installation</a></p>
 <h2 id="相關實驗"><a href="#相關實驗" class="headerlink" title="相關實驗"></a>相關實驗</h2><p><a target="_blank" rel="noopener" href="http://hackmd.webpat.co/s/BybwBrg0f#">[LAB] GitLab Runner @ Rancher</a></p>
 
-        </div>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://salmon.tw">About</a></li>
+        
+      </ul>
+    </div>
+
     
-<!-- tags -->
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81Docker-container-runner"><span class="toc-number">1.</span> <span class="toc-text">一、Docker container runner</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%BB%BA%E7%AB%8B-container"><span class="toc-number">1.1.</span> <span class="toc-text">1. 建立 container</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%80%B2%E5%85%A5-runner-%E5%88%97%E8%A1%A8"><span class="toc-number">1.2.</span> <span class="toc-text">2. 進入 runner 列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%A8%BB%E5%86%8A-runner"><span class="toc-number">1.3.</span> <span class="toc-text">3. 註冊 runner</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%A8%BB%E5%86%8A%E5%AE%8C%E6%88%90"><span class="toc-number">1.4.</span> <span class="toc-text">4. 註冊完成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1%E5%81%9A%E5%AE%8C%E6%AD%A5%E9%A9%9F-1-3"><span class="toc-number">1.5.</span> <span class="toc-text">一次做完步驟 1~3</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Shell-runner"><span class="toc-number">2.</span> <span class="toc-text">二、Shell runner</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%80%B2%E5%85%A5-runner-%E5%88%97%E8%A1%A8"><span class="toc-number">2.1.</span> <span class="toc-text">1. 進入 runner 列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%A8%BB%E5%86%8A-runner"><span class="toc-number">2.2.</span> <span class="toc-text">2. 註冊 runner</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%B0%87-gitlab-runner-%E5%8A%A0%E5%85%A5%E8%87%B3-docker-%E7%BE%A4%E7%B5%84"><span class="toc-number">2.3.</span> <span class="toc-text">3. 將 gitlab-runner 加入至 docker 群組</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%AA%A2%E6%9F%A5-gitlab-runner-%E6%98%AF%E5%90%A6%E6%9C%89%E6%AC%8A%E9%99%90%E4%BD%BF%E7%94%A8-docker"><span class="toc-number">2.4.</span> <span class="toc-text">4. 檢查 gitlab-runner 是否有權限使用 docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%A8%BB%E5%86%8A%E5%AE%8C%E6%88%90"><span class="toc-number">2.5.</span> <span class="toc-text">5. 註冊完成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%BC-GitLab-CI-%E4%BD%BF%E7%94%A8-docker"><span class="toc-number">2.6.</span> <span class="toc-text">於 GitLab CI 使用 docker</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Q-A"><span class="toc-number">3.</span> <span class="toc-text">Q&amp;A</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%8C%AF%E8%AA%A4%E8%A8%8A%E6%81%AF-x509-certificate-signed-by-unknown-authority"><span class="toc-number">3.1.</span> <span class="toc-text">1. 錯誤訊息 - x509: certificate signed by unknown authority</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%A1%88"><span class="toc-number">3.1.1.</span> <span class="toc-text">解決方案</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%8C%AF%E8%AA%A4%E8%A8%8A%E6%81%AF-failed-to-get-default-registry-endpoint-from-daemon"><span class="toc-number">3.2.</span> <span class="toc-text">2. 錯誤訊息 - failed to get default registry endpoint from daemon</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%A1%88-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">解決方案</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Pipeline-jobs-%E7%84%A1%E6%B3%95%E5%85%B1%E4%BA%AB-cache"><span class="toc-number">3.3.</span> <span class="toc-text">3. Pipeline jobs 無法共享 cache</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%A1%88-2"><span class="toc-number">3.3.1.</span> <span class="toc-text">解決方案</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%8C%AF%E8%AA%A4%E8%A8%8A%E6%81%AF-Uploading-artifacts-to-coordinator-too-large-archive"><span class="toc-number">3.4.</span> <span class="toc-text">4. 錯誤訊息 - Uploading artifacts to coordinator... too large archive</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%A1%88-3"><span class="toc-number">3.4.1.</span> <span class="toc-text">解決方案</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E5%AE%83%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%A1%88"><span class="toc-number">3.4.2.</span> <span class="toc-text">其它解決方案</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="toc-number">4.</span> <span class="toc-text">參考資料</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E9%97%9C%E5%AF%A6%E9%A9%97"><span class="toc-number">5.</span> <span class="toc-text">相關實驗</span></a></li></ol>
+      </div>
+    
 
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&text=註冊 GitLab Runner"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&title=註冊 GitLab Runner"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&is_video=false&description=註冊 GitLab Runner"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=註冊 GitLab Runner&body=Check out this article: https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&title=註冊 GitLab Runner"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&title=註冊 GitLab Runner"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&title=註冊 GitLab Runner"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&title=註冊 GitLab Runner"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&name=註冊 GitLab Runner&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://blog.salmon.tw/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/&t=註冊 GitLab Runner"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
 </div>
-                <div class="footer">
-    <span>Copyright © <script>document.write(new Date().getFullYear())</script> <a target="_blank" rel="noopener" href="https://salmon.tw">Salmon</a></span>
-    <!-- <span>Powered by <a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> with <a target="_blank" rel="noopener" href="https:///imzl.com/zenmind">ZenMind</a></span> -->
-</div>
 
-<link rel="stylesheet" href="/css/a11y-dark.min.css">
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2012-2025
+    Ze-Hao Wang (Salmon)
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://salmon.tw">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
 
 
-<script src="/js/highlight.min.js"></script>
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
 
 
-<script src="/js/highlightjs-line-numbers.js"></script>
+    <!-- jquery -->
 
-<script>
-    hljs.initHighlightingOnLoad();
-    hljs.initLineNumbersOnLoad();
-</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
 
-            </div>
-        </div>
-    </body>
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
 </html>
