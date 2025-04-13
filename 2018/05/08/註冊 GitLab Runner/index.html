@@ -113,7 +113,8 @@
 </ul>
 <h3 id="2-進入-runner-列表"><a href="#2-進入-runner-列表" class="headerlink" title="2. 進入 runner 列表"></a>2. 進入 runner 列表</h3><p>已註冊的 Runner 列表可於 GitLab 界面中查閱、編輯概略資訊。</p>
 <blockquote>
-<p>Runner 列表：<br>　　http://&lt;GitLab 的 domain&gt;&#x2F;admin&#x2F;runners</p>
+<p>Runner 列表： 
+　　http://&lt;GitLab 的 domain&gt;&#x2F;admin&#x2F;runners</p>
 </blockquote>
 <p>進入 Runners 界面後，找到下圖之段落，高亮兩處於稍後註冊 runner 會需要鍵入的兩項資訊 <strong>GitLab URL</strong> 與 <strong>registration token</strong>。</p>
 <p><img src="http://hackmd.webpat.co/uploads/upload_05ed19f569d1335ce4629c43cdd9925c.png"></p>
@@ -209,7 +210,7 @@
 <h4 id="解決方案-2"><a href="#解決方案-2" class="headerlink" title="解決方案"></a>解決方案</h4><p>透過 artifacts 達到相同的效果，首先修改相關 repo 的 <code> .gitlab-ci.yml</code></p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 將 installation 階段的產物作為 artifacts</span></span><br><span class="line"><span class="attr">installation:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">artifacts:</span> <span class="comment"># 後續 jobs 將會繼承該 path 的檔案</span></span><br><span class="line">    <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">node_modules/</span></span><br><span class="line">    <span class="attr">expire_in:</span> <span class="number">1</span> <span class="string">day</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="comment"># ....</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="4-錯誤訊息-Uploading-artifacts-to-coordinator…-too-large-archive"><a href="#4-錯誤訊息-Uploading-artifacts-to-coordinator…-too-large-archive" class="headerlink" title="4. 錯誤訊息 - Uploading artifacts to coordinator… too large archive"></a>4. 錯誤訊息 - Uploading artifacts to coordinator… too large archive</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">完整訊息</span></span><br><span class="line">ERROR: Uploading artifacts to coordinator... too large archive    id=1 token=****</span><br><span class="line">FATAL: Too large</span><br></pre></td></tr></table></figure>
+<h3 id="4-錯誤訊息-Uploading-artifacts-to-coordinator-too-large-archive"><a href="#4-錯誤訊息-Uploading-artifacts-to-coordinator-too-large-archive" class="headerlink" title="4. 錯誤訊息 - Uploading artifacts to coordinator... too large archive"></a>4. 錯誤訊息 - Uploading artifacts to coordinator... too large archive</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">完整訊息</span></span><br><span class="line">ERROR: Uploading artifacts to coordinator... too large archive    id=1 token=****</span><br><span class="line">FATAL: Too large</span><br></pre></td></tr></table></figure>
 
 <h4 id="解決方案-3"><a href="#解決方案-3" class="headerlink" title="解決方案"></a>解決方案</h4><ul>
 <li><a target="_blank" rel="noopener" href="https://gitlab.webpat.co/help/user/admin_area/settings/continuous_integration#maximum-artifacts-size">https://gitlab.webpat.co/help/user/admin_area/settings/continuous_integration#maximum-artifacts-size</a></li>
@@ -225,7 +226,11 @@
 <blockquote>
 <p>附註，能夠透過 <code>docker logs gitlab-runner</code> 來觀察目前的配置是否正確，若無訊息輸出，表正常設定。</p>
 </blockquote>
-<h2 id="參考資料"><a href="#參考資料" class="headerlink" title="參考資料"></a>參考資料</h2><p><a target="_blank" rel="noopener" href="http://hackmd.webpat.co/s/BJE9U1Y9W">GitLab CI&#x2F;CD 設定手冊</a>（HackMD）<br><a target="_blank" rel="noopener" href="https://docs.gitlab.com/runner/register/index.html">Registering Runners</a><br><a target="_blank" rel="noopener" href="https://docs.gitlab.com/runner/install/linux-repository.html" title="Install GitLab Runner using the official GitLab repositories">Install GitLab Runner using the official GitLab repositories</a><br><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/installation/" title="Install Docker">Install Docker</a><br><a target="_blank" rel="noopener" href="https://about.gitlab.com/installation/" title="GitLab Installation">GitLab Installation</a></p>
+<h2 id="參考資料"><a href="#參考資料" class="headerlink" title="參考資料"></a>參考資料</h2><p><a target="_blank" rel="noopener" href="http://hackmd.webpat.co/s/BJE9U1Y9W">GitLab CI&#x2F;CD 設定手冊</a>（HackMD）
+<a target="_blank" rel="noopener" href="https://docs.gitlab.com/runner/register/index.html">Registering Runners</a>
+<a target="_blank" rel="noopener" href="https://docs.gitlab.com/runner/install/linux-repository.html" title="Install GitLab Runner using the official GitLab repositories">Install GitLab Runner using the official GitLab repositories</a>
+<a target="_blank" rel="noopener" href="https://docs.docker.com/engine/installation/" title="Install Docker">Install Docker</a>
+<a target="_blank" rel="noopener" href="https://about.gitlab.com/installation/" title="GitLab Installation">GitLab Installation</a></p>
 <h2 id="相關實驗"><a href="#相關實驗" class="headerlink" title="相關實驗"></a>相關實驗</h2><p><a target="_blank" rel="noopener" href="http://hackmd.webpat.co/s/BybwBrg0f#">[LAB] GitLab Runner @ Rancher</a></p>
 
         </div>
