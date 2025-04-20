@@ -1,256 +1,65 @@
-<!DOCTYPE html>
-<html lang=zh>
-<head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta property="og:type" content="website">
-<meta property="og:title" content="Salmon">
-<meta property="og:url" content="https://blog.salmon.tw/index.html">
-<meta property="og:site_name" content="Salmon">
-<meta property="og:locale" content="zh_TW">
-<meta property="article:author" content="Ze-Hao Wang (Salmon)">
-<meta property="article:tag" content="node.js, back-end, full-stack">
-<meta name="twitter:card" content="summary">
-    
-    
-      
-        
-          <link rel="shortcut icon" href="/images/favicon.ico">
-        
-      
-      
-        
-          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-        
-      
-    
-    <!-- title -->
-    <title>Salmon</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
-
-
-    <!-- Umami Analytics -->
-
-
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
-
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-<meta name="generator" content="Hexo 7.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-    <div class="content index py4 h-card">
-        
-          <header id="header">
-  <a class="u-url u-uid" href="/">
-  
-    
-      <img id="logo" alt class="u-logo" src="/images/logo.png" />
-    
-  
-    <div id="title">
-      <h1 class="p-name">Salmon</h1>
-    </div>
-  </a>
-  <div id="nav">
-    <ul>
-      <li class="icon">
-        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
-      </li>
-      <!--
-     --><li><a href="/">Home</a></li><!--
-   --><!--
-     --><li><a target="_blank" rel="noopener" href="https://salmon.tw">About</a></li><!--
-   -->
-    </ul>
-  </div>
-</header>
-
-        
-        <section id="about" class="p-note">
-  
-  
-    <p>
-      Find me on
-      
-      
-      
-        
-        
-          <a class="icon u-url" target="_blank" rel="noopener me" href="https://github.com/wazho" aria-label="github" title="github">
-            <i class="fa-brands fa-github"></i><!--
-      ---></a><!--
-    ---><!--
-    --->.
-        
-      
-    </p>
-  
-</section>
-
-<section id="writing">
-  <span class="h1"><a href="/">Writing</a></span>
-  
-  <ul class="post-list">
-    
-    
-      
-    
-    
-      <li class="post-item">
-        
-    <div class="meta">
-      
-        
-          <time datetime="2025-04-06T12:00:00.000Z" class="dt-published" itemprop="datePublished">2025-04-06</time>
-        
-      
-    </div>
-
-
-        <span>
-    
-        <a class="" href="/2025/04/06/loki-crawler-logs/">利用 Grafana Loki 高效收集與監控爬蟲日誌</a>
-    
-
-
-</span>
-      </li>
-    
-      <li class="post-item">
-        
-    <div class="meta">
-      
-        
-          <time datetime="2018-11-14T12:00:00.000Z" class="dt-published" itemprop="datePublished">2018-11-14</time>
-        
-      
-    </div>
-
-
-        <span>
-    
-        <a class="" href="/2018/11/14/Elastic%20Stack%20-%20Heartbeat/">Elastic Stack - Heartbeat</a>
-    
-
-
-</span>
-      </li>
-    
-      <li class="post-item">
-        
-    <div class="meta">
-      
-        
-          <time datetime="2018-05-08T12:00:00.000Z" class="dt-published" itemprop="datePublished">2018-05-08</time>
-        
-      
-    </div>
-
-
-        <span>
-    
-        <a class="" href="/2018/05/08/%E8%A8%BB%E5%86%8A%20GitLab%20Runner/">註冊 GitLab Runner</a>
-    
-
-
-</span>
-      </li>
-    
-      <li class="post-item">
-        
-    <div class="meta">
-      
-        
-          <time datetime="2017-11-21T12:00:00.000Z" class="dt-published" itemprop="datePublished">2017-11-21</time>
-        
-      
-    </div>
-
-
-        <span>
-    
-        <a class="" href="/2017/11/21/Rancher%20%E8%A8%AD%E5%AE%9A%20Docker%20registries/">Rancher 設定 Docker registries</a>
-    
-
-
-</span>
-      </li>
-    
-  </ul>
-  
-</section>
-
-
-
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
-    
-    
-    2012-2025
-    Ze-Hao Wang (Salmon)
-  </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-        <!--
-       --><li><a href="/">Home</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://salmon.tw">About</a></li><!--
-     -->
-      </ul>
-    </nav>
-  </div>
-</footer>
-
-    </div>
-    <!-- styles -->
-
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
-
-
-<script src="/js/main.js"></script>
-
-<!-- search -->
-
-<!-- Baidu Analytics -->
-
-<!-- Cloudflare Analytics -->
-
-<!-- Disqus Comments -->
-
-<!-- utterances Comments -->
-
-</body>
-</html>
+<!DOCTYPE html><html lang="en"> <head><!-- High Priority Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vitesse theme for Astro</title><meta name="generator" content="Astro v5.6.2"><!-- Low Priority Global Metadata --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" href="/rss.xml" title="RSS"><!-- Page Metadata --><link rel="canonical" href="https://astro-theme-vitesse.netlify.app/"><meta name="description" content="A Minimal, SEO-friendly portfolio and blog theme for Astro."><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://astro-theme-vitesse.netlify.app/"><meta property="og:title" content="Vitesse theme for Astro"><meta property="og:description" content="A Minimal, SEO-friendly portfolio and blog theme for Astro."><meta property="og:image" content="https://astro-theme-vitesse.netlify.app/hero.jpg"><meta property="og:image:alt" content="Website Main Image"><!-- X / Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://astro-theme-vitesse.netlify.app/"><meta property="twitter:title" content="Vitesse theme for Astro"><meta property="twitter:description" content="A Minimal, SEO-friendly portfolio and blog theme for Astro."><meta property="twitter:image" content="https://astro-theme-vitesse.netlify.app/hero.jpg"><meta name="twitter:image:alt" content="Website Main Image"><script type="module" src="/_astro/BaseHead.astro_astro_type_script_index_0_lang.z8E7Q00g.js"></script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.DSxwJ3tr.js"></script><link rel="stylesheet" href="/_astro/_slug_.B0YNPwtr.css"><style>[data-astro-transition-scope="astro-lzoyhzq4-1"] { view-transition-name: astro-lzoyhzq4-1; }@layer astro { ::view-transition-old(astro-lzoyhzq4-1) { 
+	animation-duration: 0.4s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(astro-lzoyhzq4-1) { 
+	animation-duration: 0.4s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(astro-lzoyhzq4-1) { 
+	animation-duration: 0.4s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(astro-lzoyhzq4-1) { 
+	animation-duration: 0.4s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-lzoyhzq4-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-lzoyhzq4-1"] { 
+	animation-duration: 0.4s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-lzoyhzq4-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-lzoyhzq4-1"] { 
+	animation-duration: 0.4s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-lzoyhzq4-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-lzoyhzq4-1"] { 
+	animation-duration: 0.4s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-lzoyhzq4-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-lzoyhzq4-1"] { 
+	animation-duration: 0.4s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style></head> <body class="bg-main text-main min-h-screen font-sans w-full bg-dot"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();;(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="VIs2l" prefix="v0" component-url="/_astro/Header.jRN7dmEK.js" component-export="default" renderer-url="/_astro/client.B_hw06eU.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;Header&quot;,&quot;value&quot;:true}" await-children><!--[--><header id="header" class="!fixed bg-transparent z-899 w-screen h-20 px-6 flex justify-between items-center relative" data-v-b37db4b6><div class="flex items-center h-full" data-v-b37db4b6><a href="/" mr-6 aria-label="Header Logo Image" data-v-b37db4b6><img width="32" height="32" src="/favicon.svg" alt="Logo Image" data-v-b37db4b6></a><nav class="sm:flex hidden flex-wrap gap-x-6 position-initial flex-row" data-v-b37db4b6><!--[--><a aria-label="Blog" target="_self" nav-link href="/blog" data-v-b37db4b6>Blog</a><a aria-label="Projects" target="_self" nav-link href="/projects" data-v-b37db4b6>Projects</a><!--]--></nav><div sm:hidden h-full flex items-center data-v-b37db4b6><menu i-ri-menu-2-fill data-v-b37db4b6></menu></div></div><div class="flex gap-x-6" data-v-b37db4b6><!--[--><a aria-label="GitHub" class="i-ri-github-line" nav-link target="_blank" href="https://github.com/wazho" data-v-b37db4b6></a><!--]--><a nav-link target="_blank" href="/rss.xml" i-ri-rss-line aria-label="RSS" data-v-b37db4b6></a><button aria-label="Light Theme" nav-link dark:i-ri-moon-line i-ri-sun-line data-v-b37db4b6></button></div></header><nav class="nav-drawer sm:hidden" data-v-b37db4b6><i i-ri-menu-2-fill data-v-b37db4b6></i><!--[--><a aria-label="Blog" target="_self" nav-link href="/blog" data-v-b37db4b6>Blog</a><a aria-label="Projects" target="_self" nav-link href="/projects" data-v-b37db4b6>Projects</a><!--]--></nav><div class="nav-drawer-mask" data-v-b37db4b6></div><!--]--><!--astro:end--></astro-island> <main class="grow max-w-3xl mx-auto sm:pt-36 pt-26 pb-16 px-6 relative" data-astro-transition-scope="astro-lzoyhzq4-1">  <article class="prose"> <h1 class="text-title">Vitesse theme</h1> <p>Vitesse theme for Astro, supports Vue and UnoCSS.</p> <p>
+A minimal, SEO-riendly portfolio and blog theme for Astro. It's inspired by <a target="_blank" href="https://antfu.me">antfu.me</a>.
+</p> <p> <img width="640" height="360" src="/hero.jpg" alt="Hero Image"> </p> <p>
+Based on first principles thinking, and you can also see from the picture
+<sup>👆</sup>, the goal of this theme is to
+<b>make complex things as simple as possible</b>
+. So, the core of this theme is the content, and the other elements are just auxiliary.
+</p> <p>Here are the features you don't need to worry about:</p> <ul> <li>100 / 100 Lighthouse performance</li> <li>Responsive</li> <li>SEO-friendly</li> <li>Light / Dark Theme</li> <li>Markdown support</li> <li> <a target="_blank" href="https://mdxjs.com/">MDX</a>
+(components in your markdown) support
+</li> <li> <a target="_blank" href="https://vuejs.org/">Vue</a>
+SFC component support
+</li> <li>Auto generated sitemap and RSS Feed</li> <li> <a target="_blank" href="https://vueuse.org/">VueUse</a>
+&
+<a target="_blank" href="https://lodash.com/">Lodash</a>
+support
+</li> </ul> <p>
+By the way, this theme use the <a target="_blank" href="https://unocss.dev/">UnoCSS</a> for style, it's fast.
+</p> <p>
+Visit it
+<a target="_blank" href="https://github.com/kieranwv/astro-theme-vitesse"> on GitHub </a>
+to fork the repository, read the docs or one-click deploy on Netlify.
+</p> <p>
+If you like Vitesse theme for Astro, please
+<a target="_blank" href="https://github.com/kieranwv"> click follow </a>
+for me.
+</p> <hr class="hr-line"> <p>Find me on</p> <p class="flex gap-x-4 gap-y-2 flex-wrap"> <a aria-label="GitHub" href="https://github.com/wazho" target="_blank" class="prose-link"> <i class="i-ri-github-line"></i> GitHub </a><a aria-label="Linkedin" href target="_blank" class="prose-link"> <i class="i-simple-icons-linkedin"></i> Linkedin </a> </p> <p>
+If you have any questions, please email me at
+<a prose-link aria-label="salmon.zh.tw@gmail.com" href="mailto:salmon.zh.tw@gmail.com"> salmon.zh.tw@gmail.com </a>.
+</p> </article>  <astro-island uid="1KrDO5" prefix="v1" component-url="/_astro/ScrollToTop.TcOVvn_u.js" component-export="default" renderer-url="/_astro/client.B_hw06eU.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ScrollToTop&quot;,&quot;value&quot;:true}" await-children><button aria-label="Scroll to top" fixed right-5 sm:right-30 bottom-30 w-12 h-12 text-lg hover:op100 rounded-full flex="~ items-center justify-center" bg-hex-8883 transition duration-300 z-100 print:hidden class="op0 pointer-events-none"><i i-ri-arrow-up-line></i></button><!--astro:end--></astro-island> <footer class="w-full mt-18 pt-6 pb-8 max-w-3xl text-sm flex flex-col gap-4 border-main border-t !border-op-50 text-dark dark:text-white"><!----><div flex><a nav-link href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a><span op-70>  ©  2025  Ze-Hao Wang (Salmon).</span></div></footer> </main> </body></html>

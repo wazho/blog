@@ -1,0 +1,482 @@
+<!DOCTYPE html><html lang="en"> <head><!-- High Priority Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>利用 Grafana Loki 高效收集與監控爬蟲日誌 | Vitesse theme for Astro</title><meta name="generator" content="Astro v5.6.2"><!-- Low Priority Global Metadata --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" href="/rss.xml" title="RSS"><!-- Page Metadata --><link rel="canonical" href="https://astro-theme-vitesse.netlify.app/posts/loki-crawler-logs/"><meta name="description" content="在 Lawsnote 服務期間，我們需要開發數百支網頁抓取程式，並有效率地管理這數百支 crawlers。當任何一支程式發生錯誤時，能夠即時通知相關人員並迅速定位問題，便是我們維運流程中的關鍵。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://astro-theme-vitesse.netlify.app/posts/loki-crawler-logs/"><meta property="og:title" content="利用 Grafana Loki 高效收集與監控爬蟲日誌 | Vitesse theme for Astro"><meta property="og:description" content="在 Lawsnote 服務期間，我們需要開發數百支網頁抓取程式，並有效率地管理這數百支 crawlers。當任何一支程式發生錯誤時，能夠即時通知相關人員並迅速定位問題，便是我們維運流程中的關鍵。"><meta property="og:image" content="https://astro-theme-vitesse.netlify.app/hero.jpg"><meta property="og:image:alt" content="Website Main Image"><!-- X / Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://astro-theme-vitesse.netlify.app/posts/loki-crawler-logs/"><meta property="twitter:title" content="利用 Grafana Loki 高效收集與監控爬蟲日誌 | Vitesse theme for Astro"><meta property="twitter:description" content="在 Lawsnote 服務期間，我們需要開發數百支網頁抓取程式，並有效率地管理這數百支 crawlers。當任何一支程式發生錯誤時，能夠即時通知相關人員並迅速定位問題，便是我們維運流程中的關鍵。"><meta property="twitter:image" content="https://astro-theme-vitesse.netlify.app/hero.jpg"><meta name="twitter:image:alt" content="Website Main Image"><script type="module" src="/_astro/BaseHead.astro_astro_type_script_index_0_lang.z8E7Q00g.js"></script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.DSxwJ3tr.js"></script><link rel="stylesheet" href="/_astro/_slug_.B0YNPwtr.css"><style>[data-astro-transition-scope="astro-lzoyhzq4-1"] { view-transition-name: astro-lzoyhzq4-1; }@layer astro { ::view-transition-old(astro-lzoyhzq4-1) { 
+	animation-duration: 0.4s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(astro-lzoyhzq4-1) { 
+	animation-duration: 0.4s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(astro-lzoyhzq4-1) { 
+	animation-duration: 0.4s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(astro-lzoyhzq4-1) { 
+	animation-duration: 0.4s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-lzoyhzq4-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-lzoyhzq4-1"] { 
+	animation-duration: 0.4s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-lzoyhzq4-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-lzoyhzq4-1"] { 
+	animation-duration: 0.4s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-lzoyhzq4-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-lzoyhzq4-1"] { 
+	animation-duration: 0.4s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-lzoyhzq4-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-lzoyhzq4-1"] { 
+	animation-duration: 0.4s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style></head> <body class="bg-main text-main min-h-screen font-sans w-full bg-dot"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();;(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="VIs2l" prefix="v0" component-url="/_astro/Header.jRN7dmEK.js" component-export="default" renderer-url="/_astro/client.B_hw06eU.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;Header&quot;,&quot;value&quot;:true}" await-children><!--[--><header id="header" class="!fixed bg-transparent z-899 w-screen h-20 px-6 flex justify-between items-center relative" data-v-b37db4b6><div class="flex items-center h-full" data-v-b37db4b6><a href="/" mr-6 aria-label="Header Logo Image" data-v-b37db4b6><img width="32" height="32" src="/favicon.svg" alt="Logo Image" data-v-b37db4b6></a><nav class="sm:flex hidden flex-wrap gap-x-6 position-initial flex-row" data-v-b37db4b6><!--[--><a aria-label="Blog" target="_self" nav-link href="/blog" data-v-b37db4b6>Blog</a><a aria-label="Projects" target="_self" nav-link href="/projects" data-v-b37db4b6>Projects</a><!--]--></nav><div sm:hidden h-full flex items-center data-v-b37db4b6><menu i-ri-menu-2-fill data-v-b37db4b6></menu></div></div><div class="flex gap-x-6" data-v-b37db4b6><!--[--><a aria-label="GitHub" class="i-ri-github-line" nav-link target="_blank" href="https://github.com/wazho" data-v-b37db4b6></a><!--]--><a nav-link target="_blank" href="/rss.xml" i-ri-rss-line aria-label="RSS" data-v-b37db4b6></a><button aria-label="Light Theme" nav-link dark:i-ri-moon-line i-ri-sun-line data-v-b37db4b6></button></div></header><nav class="nav-drawer sm:hidden" data-v-b37db4b6><i i-ri-menu-2-fill data-v-b37db4b6></i><!--[--><a aria-label="Blog" target="_self" nav-link href="/blog" data-v-b37db4b6>Blog</a><a aria-label="Projects" target="_self" nav-link href="/projects" data-v-b37db4b6>Projects</a><!--]--></nav><div class="nav-drawer-mask" data-v-b37db4b6></div><!--]--><!--astro:end--></astro-island> <main class="grow max-w-3xl mx-auto sm:pt-36 pt-26 pb-16 px-6 relative" data-astro-transition-scope="astro-lzoyhzq4-1">  <article class="prose"> <h1>利用 Grafana Loki 高效收集與監控爬蟲日誌</h1> <p op-50> <time datetime="2025-04-05T16:00:00.000Z">Apr 6 2025</time> <span>· 30min</span>  </p>  <p>在 <a href="https://about.lawsnote.com/">Lawsnote</a> 服務期間，因應產品與專案需求，我們需要開發數百支網頁抓取程式 (Web Scraper) 與網頁爬取程式 (Web Crawler)，從政府主管機關的網站中擷取特定法學資料，並在資料梳理的同時，進行結構化處理並寫入資料庫中。</p>
+<blockquote>
+<p>網頁抓取程式 (Web Scraper) 與網頁爬取程式 (Web Crawler)，以下統稱為 <strong>crawlers</strong>。</p>
+</blockquote>
+<p>Lawsnote 提供的 <a href="https://lawsnote.com/">Lawsnote Search</a> (法學搜尋引擎)、<a href="https://blog.lawsnote.com/2022/12/lawsnote-regtech-compliance-solution/">企業法遵系統方案</a>、<a href="https://monta.lawsnote.com/">Lawsnote Monta</a> (法遵解決方案) 等服務，皆高度講求資料的 <strong>即時性</strong> 與 <strong>準確性</strong>。</p>
+<p>因此在我們的團隊中，除了例行性的程式開發外，也必須有效率地管理這數百支 crawlers。當任何一支程式發生錯誤時，能夠即時通知相關人員並迅速定位問題，便是我們維運流程中的關鍵。</p>
+<p>為了達成這個目標，crawler 的日誌 (Logs) 便需要被妥善地收集與監控。這些日誌不僅包含執行狀態，也涵蓋整個過程中所爬取的請求 URL、HTTP 狀態碼、錯誤訊息 (Error Message) 等重要資訊。</p>
+<p>在這篇文章中，我們將介紹如何利用 Grafana Loki 收集與監控這些日誌資料，並最終透過 Grafana 進行可視化展示，打造一個高效、穩定且實用的日誌監控方案。無論你是第一次接觸 Loki，或是想優化排程程式的日誌管理流程，希望這篇文章都能帶來一些實用的參考。</p>
+<h2 id="本文架構">本文架構</h2>
+<p>這篇文章將從實務出發，介紹如何在 crawlers 專案中導入 Loki 與 Grafana，實作一套好用的日誌監控方案。主要內容包含：</p>
+<ol>
+<li>
+<p><strong>為什麼需要日誌監控？</strong></p>
+<p>描述 crawlers 的管理挑戰，以及 logs 在即時監控與錯誤追蹤中的重要性。</p>
+</li>
+<li>
+<p><strong>設計日誌內容</strong></p>
+<p>介紹日誌的設計原則，包括日誌等級、可結構化日誌設計原則，以及如何判斷哪些日誌值得記錄。</p>
+</li>
+<li>
+<p><strong>使用 Grafana Loki 收集日誌資料</strong></p>
+<p>包含 Loki、Promtail 安裝與設定，如何將 crawler logs 傳送進 Loki。</p>
+</li>
+<li>
+<p><strong>透過 Grafana 可視化監控日誌</strong></p>
+<p>如何建立 dashboard、撰寫 LogQL 查詢，以及設定告警通知機制。</p>
+</li>
+<li>
+<p><strong>應用實例與延伸建議</strong></p>
+<p>實際案例分享與一些擴充應用的建議。</p>
+</li>
+</ol>
+<h2 id="為什麼需要日誌監控">為什麼需要日誌監控？</h2>
+<p>當系統規模尚小、程式數量不多時，偵錯階段通常可以靠 <strong>標準輸出 (stdout)</strong> 和標準 <strong>錯誤輸出 (stderr)</strong> 直接在 terminal 或 console 上查看，抑或是將 log 輸出至檔案中。</p>
+<p>倘若規模逐步擴大後，若採用相同方式進行管理，將會面臨以下幾個挑戰：</p>
+<ol>
+<li>
+<p><strong>日誌分散於不同主機或容器中，難以集中查閱</strong></p>
+<p>當程式數量一多，可能又分散執行在不同機器上，若沒有集中式的日誌收集機制，維運人員往往需要 SSH 到不同機器節點去翻找 log，不僅耗時，也容易遺漏資訊。</p>
+</li>
+<li>
+<p><strong>缺乏統一查詢介面與格式標準，難以追溯問題源頭</strong></p>
+<p>每支程式可能使用不同的 log 格式與層級，導致即使 log 都存在，也難以快速篩選出錯誤來源或還原事件順序。</p>
+</li>
+<li>
+<p><strong>日誌儲存空間有限，歷史紀錄易被覆蓋</strong></p>
+<p>若未搭配 <strong>日誌輪替 (log rotation)</strong> 機制，過舊的日誌可能會被覆蓋，導致事後調查時無法取得完整資訊。</p>
+</li>
+<li>
+<p><strong>錯誤發生無法即時通知相關人員</strong></p>
+<p>傳統 log 記錄方式僅作為事後檢查之用，不易即時反饋問題。</p>
+</li>
+<li>
+<p><strong>難以進行統計與視覺化分析</strong></p>
+<p>若想瞭解各程式的整體執行狀況，以 crawler 舉例有 <em>階段成功和失敗資訊</em>、<em>最常失敗的目標網站</em>、<em>HTTP 狀態碼分布</em> 等，將需自行撰寫腳本分析散落的 log，成效不彰。</p>
+</li>
+</ol>
+<p><img src="" alt="TODO:"></p>
+<center>
+  <p><strong>TODO:</strong></p>
+</center>
+<h3 id="什麼樣的資料適合收集">什麼樣的資料適合收集？</h3>
+<p>在設計日誌系統時，並不是所有輸出都適合或需要被收集。我們應該根據系統特性與實際需求，挑選對後續除錯、分析與監控有實質幫助的資料。以開發 crawlers 的經驗來說，建議可以優先考慮以下幾類資訊：</p>
+<ol>
+<li>
+<p><strong>請求相關資訊</strong></p>
+<p>包括 <em>目標 URL</em>、<em>HTTP method</em>、<em>status code</em>、<em>response time</em> 等，能協助判斷目標網站是否正常、回應速度是否合理。</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>2025-01-01 12:00:00 - Requesting URL: https://example.com/api/data</span></span>
+<span class="line"><span>2025-01-01 12:00:01 - Response Status Code: 200</span></span>
+<span class="line"><span>2025-01-01 12:00:01 - Response Time: 200ms</span></span></code></pre>
+</li>
+<li>
+<p><strong>任務執行階段狀態</strong></p>
+<p>每個任務的開始與結束時間，以及中間執行的步驟 (如：下載 → 解析 → 寫入資料庫) 等，有助於還原執行流程與評估效能瓶頸。</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>2025-01-01 12:00:00 - Task started: Fetching data from example.com</span></span>
+<span class="line"><span>2025-01-01 12:00:01 - Parsing data...</span></span>
+<span class="line"><span>2025-01-01 12:00:02 - Writing data to database...</span></span>
+<span class="line"><span>2025-01-01 12:00:03 - Task completed: Data successfully fetched and stored.</span></span></code></pre>
+</li>
+<li>
+<p><strong>錯誤與異常</strong></p>
+<p>包括 <em>HTTP 錯誤</em>、<em>timeout</em>、<em>資料解析失敗</em> 等。這類訊息應清楚標示，方便集中查詢與設計告警條件。</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>2025-01-01 12:00:00 - HTTP Error: 404 Not Found</span></span>
+<span class="line"><span>2025-01-01 12:00:00 - Timeout Error: Request to https://example.com/api/data timed out.</span></span>
+<span class="line"><span>2025-01-01 12:00:00 - Parsing Error: Failed to parse JSON response from https://example.com/api/data</span></span></code></pre>
+</li>
+<li>
+<p><strong>環境、版本與其他自定義資訊</strong></p>
+<p>包括 <em>爬蟲版本</em>、<em>執行機器節點 IP</em>、<em>執行時間的環境變數</em>、<em>使用的函式庫版本</em> 等，有助於 debug 與還原特定部署狀態。</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>2025-01-01 12:00:00 - Crawler Version: 1.0.0</span></span>
+<span class="line"><span>2025-01-01 12:00:00 - Hostname: crawler-node-01</span></span>
+<span class="line"><span>2025-01-01 12:00:00 - IP Address: 10.0.0.15</span></span>
+<span class="line"><span>2025-01-01 12:00:00 - Node.js Version: v22.11.0</span></span>
+<span class="line"><span>2025-01-01 12:00:00 - Environment: production</span></span>
+<span class="line"><span>2025-01-01 12:00:00 - Dependencies: axios@1.6.8, cheerio@1.0.0-rc.12</span></span></code></pre>
+</li>
+</ol>
+<h2 id="設計日誌內容">設計日誌內容</h2>
+<p>撰寫日誌並不是單純的 <code>console.log("我到了這一行")</code> 就好。良好的日誌設計，應同時考量 <strong>除錯效率</strong>、<strong>可視化需求</strong> 以及 <strong>機器可讀性</strong> 等面向。</p>
+<p><img src="" alt="TODO: 準備 logs 範例的純文字版本"></p>
+<center>
+  <p><strong>日誌中若參雜的一般、重要和錯誤資訊，以人工檢視相當沒有效率。</strong></p>
+</center>
+<p>設想一個情境：某支 crawler 程式在生產環境中執行，產生了數萬行日誌，過程看似順利，卻最終未能正確將資料寫入資料庫。</p>
+<p>這時我們得回頭查看日誌來定位問題。但若資訊過於雜亂、缺乏層次分類，即使錯誤訊息已經出現，也可能輕易被掩埋其中。</p>
+<p>例如以下這段輸出：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>2025-01-01 12:00:00 - Starting task: fetch law data from site A</span></span>
+<span class="line"><span>2025-01-01 12:00:01 - Target URL: https://example.com/api/data</span></span>
+<span class="line"><span>2025-01-01 12:00:02 - Status Code: 200</span></span>
+<span class="line"><span>2025-01-01 12:00:03 - Response time is high: 1200ms</span></span>
+<span class="line"><span>2025-01-01 12:00:04 - Failed to parse response JSON</span></span></code></pre>
+<p>乍看之下每一行都像一般資訊，但其實最後一行才是造成資料缺失的主因。如果沒有良好的等級分類或結構化方式，要靠人工逐行排查才能找出線索，不但效率低，也容易誤判。</p>
+<p>這也說明了：</p>
+<blockquote>
+<p>日誌的設計品質，將直接影響開發者在緊急狀況下的反應速度與問題定位能力。</p>
+</blockquote>
+<p>因此，在後續章節中，我們將會探討：</p>
+<ul>
+<li>如何為日誌資訊設計合理的 <strong>等級分類</strong></li>
+<li>哪些類型的資訊值得被記錄下來</li>
+<li>為何「可結構化日誌格式」對於查詢與監控至關重要</li>
+</ul>
+<h3 id="日誌等級">日誌等級</h3>
+<p>除了決定「記錄什麼」，另一個關鍵是「以什麼等級記錄」。合理區分 log 等級，不僅有協助後續查詢與視覺化統計，也能減少不必要的雜訊干擾。</p>
+<p>以下是常見的 log 等級分類及其適用情境：</p>
+<ul>
+<li>
+<p><code>debug</code> — 除錯時用的詳細資訊，例如變數值、執行流程細節。</p>
+<p>適合開發環境使用，通常在正式環境會關閉或降低權重。</p>
+</li>
+<li>
+<p><code>info</code> — 系統正常執行的重要節點，例如任務啟動、請求成功、資料寫入完成等。</p>
+<p>是大多數 log 的主體，可用於觀察系統整體運作狀態。</p>
+</li>
+<li>
+<p><code>warn</code> — 非預期但尚可接受的狀況，例如重試、資料格式不符但能容錯處理。</p>
+<p>通常代表潛在異常或需要注意的現象。</p>
+</li>
+<li>
+<p><code>error</code> — 發生錯誤且可能影響任務執行的情況，例如 HTTP 失敗、解析錯誤、寫入失敗等。</p>
+<p>應列為重點監控對象，並視情況觸發告警機制。</p>
+</li>
+<li>
+<p><code>fatal</code> 或 <code>critical</code> — 系統無法繼續執行的嚴重錯誤，會中斷整個流程。</p>
+<p>可視為需立即介入的事件 (有些 logger 可設定觸發終止程序)。</p>
+</li>
+</ul>
+<p>程序前一小節的範例，加上了日誌等級後，會變成：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>2025-01-01 12:00:00 - INFO  - Starting task: fetch law data from site A</span></span>
+<span class="line"><span>2025-01-01 12:00:01 - INFO  - Target URL: https://example.com/api/data</span></span>
+<span class="line"><span>2025-01-01 12:00:02 - INFO  - Status Code: 200</span></span>
+<span class="line"><span>2025-01-01 12:00:03 - WARN  - Response time is high: 1200ms</span></span>
+<span class="line"><span>2025-01-01 12:00:04 - ERROR - Failed to parse response JSON</span></span></code></pre>
+<p>良好的 log 設計不僅在於資訊完整，更在於資訊有層次。建議根據情境合理設定 log 等級，並搭配集中式日誌系統進行過濾、查詢與告警設定，以提升整體維運效率。</p>
+<h3 id="如何判斷哪些日誌值得記錄">如何判斷「哪些日誌值得記錄」？</h3>
+<p>除了 log 等級的設定之外，另一個常見問題是：「哪些 log 值得記錄下來？」根據前述章節的討論，我們可以歸納出幾個通用原則，協助你判斷哪些日誌資訊具有實際價值，應納入紀錄與監控範圍：</p>
+<ul>
+<li>
+<p><strong>可用於判斷系統是否「有在運作」</strong></p>
+<p>包含任務的開始、結束、請求是否成功等，這些都是觀察系統狀態的基礎資訊。這類訊息適合設為 <code>info</code> 等級，作為系統流程的日常記錄依據。</p>
+</li>
+<li>
+<p><strong>可用於觀察效能瓶頸或趨勢</strong></p>
+<p>例如 response time、任務執行時間等，可以透過 log 分析出哪個階段最耗時，協助做後續優化。這類資料也屬於 <code>info</code> 等級，對於後續視覺化有所幫助。</p>
+</li>
+<li>
+<p><strong>可用於追蹤錯誤的發生條件與上下文</strong></p>
+<p>記錄錯誤類型、來源 URL、發生時間與當下的資料，有助於快速定位與還原問題。這類資訊應設為 <code>error</code> 或 <code>warn</code> 等級，並可搭配告警條件使用。</p>
+</li>
+<li>
+<p><strong>可用於重建問題發生時的執行環境</strong></p>
+<p>版本號、主機 IP、環境變數、相依套件版本等部署細節，能協助重現 bug 發生時的環境狀態。建議於啟動階段以 <code>info</code> 等級記錄一次即可。</p>
+</li>
+</ul>
+<p>這些原則不只適用於 crawler 系統，同樣也適用於排程任務 (cron jobs)、API server、資料處理流程 (如 ETL) 等場景，都是建立健全日誌系統時可參考的設計依據。</p>
+<h3 id="可結構化的日誌設計原則">可結構化的日誌設計原則</h3>
+<p>當你需要快速回答「哪一支爬蟲最常出錯？」或「哪個網址平均最慢？」等類似問題時，扁平化的文字 log 幾乎無法幫上忙，而結構化的 log 則能輕鬆達成。</p>
+<p>在 JavaScript 或 Node.js 實務中，雖然 <code>console.log()</code> 是最簡單快速的輸出方式，但若希望日誌能被機器判讀、具備良好的過濾條件與分析能力，「可結構化」就變得相當重要。</p>
+<p>所謂 <strong>可結構化日誌 (Structured Logging)</strong>，是指使用具明確欄位命名的格式 (最常見為 JSON) 輸出 log。這樣的做法能讓日誌系統 (如 Loki) 更容易針對欄位進行搜尋與 <strong>聚合 (Aggregation)</strong>，有助於提升查詢效率、視覺化呈現能力，以及與告警系統的整合性。</p>
+<p>例如，若我們在爬取資料過程中發生了錯誤，傳統的 log 記錄方式可能會是：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>2025-01-01 12:00:04 - ERROR - Failed to parse response JSON</span></span></code></pre>
+<p>以 JSON-based 的格式呈現，會變成：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">{</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  "timestamp"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">"2025-01-01T12:00:04Z"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#6E7781;--shiki-dark:#8B949E">// 時間戳記，通常以國際標準 ISO 8601 格式表示，方便後續查詢與排序。</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  "level"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">"error"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#6E7781;--shiki-dark:#8B949E">// 日誌等級，例如 info、warn、error，用來快速分類與過濾。</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  "message"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">"Failed to parse response JSON"</span><span style="color:#6E7781;--shiki-dark:#8B949E"> // 實際的訊息內容，可搭配 error stack 或說明文字。</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">}</span></span></code></pre>
+<p>根據實務場景，可以嘗試加入更多欄位，將有助於支援更細緻的分析：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">{</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  "timestamp"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">"2025-01-01T12:00:04Z"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  "level"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">"error"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  "message"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">"Failed to parse response JSON"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  "url"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">"https://example.com/api/data"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#6E7781;--shiki-dark:#8B949E">// 發生錯誤的請求網址，有助於追蹤特定目標來源。</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  "statusCode"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">200</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#6E7781;--shiki-dark:#8B949E">// HTTP 狀態碼，即使非 5xx 錯誤也可作為失敗判斷依據。</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  "durationMs"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">1200</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#6E7781;--shiki-dark:#8B949E">// 請求耗時，便於觀察效能瓶頸與超時風險。</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  "crawlerId"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">"law-fetcher-a"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#6E7781;--shiki-dark:#8B949E">// 爬蟲任務的識別代號，可對多任務進行分類。</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  "env"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">"production"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#6E7781;--shiki-dark:#8B949E">// 環境資訊，例如 production、staging、dev。</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  "hostname"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">"crawler-node-01"</span><span style="color:#6E7781;--shiki-dark:#8B949E"> // 實際執行任務的主機名稱，利於還原部署情境。</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">}</span></span></code></pre>
+<p>在後續章節中，我們將說明如何透過 Grafana Loki 解析這些欄位，並使用 LogQL 進行快速查詢與視覺化展示。</p>
+<h2 id="使用-grafana-loki-收集日誌資料">使用 Grafana Loki 收集日誌資料</h2>
+<p>在前一章中，我們說明了如何設計一份良好的爬蟲日誌。本章將實作一套本地端日誌收集環境，透過 Docker Compose 建立最小可行架構，內容包含：</p>
+<ul>
+<li>日誌收集器 Promtail</li>
+<li>儲存後端 Loki</li>
+<li>可視化工具 Grafana</li>
+<li>模擬產生日誌的 Node.js 應用程式</li>
+</ul>
+<p>這份環境設定適合用於本地測試與學習，並能作為日後部署正式監控環境的基礎。</p>
+<h3 id="角色介紹與環境建置">角色介紹與環境建置</h3>
+<p>在以 Loki 為日誌系統的架構中，主要由三個元件各司其職，分別負責日誌的收集、儲存與可視化：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>元件</th><th>角色</th><th>功能描述</th></tr></thead><tbody><tr><td>Promtail</td><td>日誌收集器</td><td>日誌資料的收集與傳送工具，常見用法是從檔案或容器 stdout/stderr 中擷取 log，轉送至 Loki。也支援透過標籤自動分類。</td></tr><tr><td>Loki</td><td>日誌儲存庫</td><td>日誌資料的儲存與查詢系統，負責接收、儲存與提供查詢介面。適合用來處理結構化或半結構化的 log 資料。</td></tr><tr><td>Grafana</td><td>可視化介面</td><td>日誌資料的可視化與監控工具，負責提供 <strong>使用者介面 (UI)</strong>，讓使用者能夠查詢、分析與視覺化日誌資料。</td></tr></tbody></table>
+<center>
+  <img src="/images/loki-crawler-logs/flow-overview.png" alt="Loki 環境架構" width="85%">
+  <p><strong>構築 Loki 日誌系統的流程</strong></p>
+</center>
+<p>我們將使用 Docker Compose 建立最小可行的 Grafana Loki 環境，從零開始撰寫 <strong>docker-compose.yaml</strong> 配置檔。</p>
+<h4 id="撰寫-docker-composeyaml-的起手式">撰寫 docker-compose.yaml 的起手式</h4>
+<p>接下來，我們會建立一份名為 <strong>docker-compose.yaml</strong> 的檔案，並在其中定義四個服務：<em>Loki</em>、<em>Promtail</em>、<em>Grafana</em> 與 Node.js 應用程式。</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#116329;--shiki-dark:#7EE787">version</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">'3.8'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">networks</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  loki</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">services</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  node-app</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#6E7781;--shiki-dark:#8B949E"># 參見章節【建立應用程式並輸出日誌】</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  loki</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#6E7781;--shiki-dark:#8B949E"># 參見下方的 loki 段落</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  promtail</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#6E7781;--shiki-dark:#8B949E"># 參見下方的 promtail 段落</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  grafana</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#6E7781;--shiki-dark:#8B949E"># 參見下方的 grafana 段落</span></span></code></pre>
+<blockquote>
+<p>完整 source code: <a href="https://github.com/wazho/grafana-loki-practice/blob/main/docker-compose.yaml">docker-compose.yaml</a></p>
+</blockquote>
+<h3 id="建立應用程式並輸出日誌">建立應用程式並輸出日誌</h3>
+<p>這個段落會建立一支模擬 crawler 的 Node.js 應用程式，並透過 <code>pino</code> 將 log 以結構化格式輸出到 stdout。</p>
+<center>
+  <img src="/images/loki-crawler-logs/flow-step1.png" alt="Loki 環境架構" width="85%">
+  <p><strong>於應用程式階段輸出相應的 logs</strong></p>
+</center>
+<h4 id="node-app-的-docker-compose-設定">node-app 的 Docker Compose 設定</h4>
+<p>我們需要建立一個 Node.js 應用程式，並將其容器化為 <strong>node-app</strong> service。細節的設定如下：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#116329;--shiki-dark:#7EE787">services</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  node-app</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    build</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">./app</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    container_name</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">node-app</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    labels</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">      job</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">node-app</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    restart</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">always</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    networks</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">      - </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">loki</span></span></code></pre>
+<blockquote>
+<p><code>labels.job</code> 設定將成為後續 log 的來源標籤 (label)，Loki 可用來依據 job 過濾 log 資料。</p>
+</blockquote>
+<h4 id="log-輸出行為說明">log 輸出行為說明</h4>
+<p>這支應用程式的行為設計如下：</p>
+<ul>
+<li>每 5 秒輸出一筆 <code>info</code> 級別的 log（模擬一般執行流程）</li>
+<li>每 10 秒輸出一筆 <code>error</code> 級別的 log（模擬錯誤情境）</li>
+</ul>
+<p>搭配 <a href="https://www.npmjs.com/package/pino">pino</a> 套件，可輸出符合 Loki 結構化查詢的 JSON log，例如：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">{</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  "level"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">"info"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  "message"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">"Fetched data successfully"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  "timestamp"</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">"2025-01-01T12:00:00Z"</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">}</span></span></code></pre>
+<p>上述欄位中，<code>level</code> 可對應至 log 等級，<code>timestamp</code> 可支援時序查詢與可視化統計，message 則為實際訊息內容。</p>
+<p>接下來，我們將介紹如何透過 Promtail 擷取這些 logs 並傳送至 Loki 儲存與分析。</p>
+<h3 id="設定-promtail">設定 Promtail</h3>
+<p>接下來我們將完成 Promtail 的服務與設定檔，讓日誌能從 container 被正確收集。</p>
+<center>
+  <img src="/images/loki-crawler-logs/flow-step2.png" alt="Loki 環境架構" width="85%">
+  <p><strong>透過 promtail 接收 logs</strong></p>
+</center>
+<h4 id="loki-service">loki service</h4>
+<p>我們將額外的 config 資料夾掛載到容器中，並指定 Loki 的設定檔路徑。</p>
+<p>細節的設定如下：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#116329;--shiki-dark:#7EE787">services</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  loki</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    image</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">grafana/loki:3.4.1</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    ports</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">      - </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">'3100:3100'</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    volumes</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">      - </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">./config:/mnt/config</span><span style="color:#6E7781;--shiki-dark:#8B949E"> # 將 config 資料夾掛載到容器中</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    command</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">-config.file=/mnt/config/loki-config.yaml</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    networks</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">      - </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">loki</span></span></code></pre>
+<h4 id="promtail-service">promtail service</h4>
+<p>我們同樣將 config 資料夾掛載到容器中，並指定 Promtail 的設定檔路徑。</p>
+<p>另外，也會將 <code>/var/run/docker.sock</code> 掛載到容器中，這是為了讓 Promtail 可以與 host 的 Docker Daemon 溝通，取得正在執行中的容器清單與相關資訊。這樣就能從 container 的 stdout 和 stderr 中擷取 log，搭配後續小節的 <strong>promtail-config.yaml</strong> 設定檔，即可完成 logs 的收集與傳送。</p>
+<p>細節的設定如下：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#116329;--shiki-dark:#7EE787">services</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  promtail</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    image</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">grafana/promtail:3.4.1</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    volumes</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">      - </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">/var/run/docker.sock:/var/run/docker.sock</span><span style="color:#6E7781;--shiki-dark:#8B949E"> # 掛載 Docker socket，讓 Promtail 可以讀取容器資訊</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">      - </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">./config:/mnt/config</span><span style="color:#6E7781;--shiki-dark:#8B949E"> # 將 config 資料夾掛載到容器中</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    command</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">-config.file=/mnt/config/promtail-config.yaml</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    networks</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">      - </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">loki</span></span></code></pre>
+<h4 id="loki-設定檔-loki-configyaml">loki 設定檔: loki-config.yaml</h4>
+<p>在 loki service 中提到過，我們需要建立一個名為 <strong>loki-config.yaml</strong> 的設定檔，以供其使用。以下為設定內容：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#116329;--shiki-dark:#7EE787">auth_enabled</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">false</span><span style="color:#6E7781;--shiki-dark:#8B949E"> # 關閉權限驗證</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">server</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  http_listen_port</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">3100</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">common</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  path_prefix</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">/tmp/loki</span><span style="color:#6E7781;--shiki-dark:#8B949E"> # ①</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  storage</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#6E7781;--shiki-dark:#8B949E"># ②</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    filesystem</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">      chunks_directory</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">/tmp/loki/chunks</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">      rules_directory</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">/tmp/loki/rules</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  replication_factor</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">1</span><span style="color:#6E7781;--shiki-dark:#8B949E"> # ③</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  ring</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#6E7781;--shiki-dark:#8B949E"># ④</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    kvstore</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">      store</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">inmemory</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">schema_config</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  configs</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">    - </span><span style="color:#116329;--shiki-dark:#7EE787">from</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">2025-04-01</span><span style="color:#6E7781;--shiki-dark:#8B949E"> # ⑤</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">      store</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">tsdb</span><span style="color:#6E7781;--shiki-dark:#8B949E"> # ⑥</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">      object_store</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">filesystem</span><span style="color:#6E7781;--shiki-dark:#8B949E"> # ⑦</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">      schema</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">v13</span><span style="color:#6E7781;--shiki-dark:#8B949E"> # ⑧</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">      index</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#6E7781;--shiki-dark:#8B949E"># ⑨</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">        prefix</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">index_</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">        period</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">24h</span></span></code></pre>
+<p><code>common</code> 各欄位說明：</p>
+<ol>
+<li><code>path_prefix</code>: 指定 Loki 儲存資料的根目錄，後續 chunks 與 index 等都會相對於此路徑建立。</li>
+<li><code>storage.filesystem</code>: 設定資料實際儲存位置，包括 chunks 與 rules。</li>
+<li><code>replication_factor</code>: 設定資料副本數，本地測試使用 <code>1</code> 即可。</li>
+<li><code>ring.kvstore.store</code>: 設定 ring 用來追蹤 instance 狀態的方式，單節點時使用 inmemory 即可，正式環境會使用 <code>etcd</code>、<code>consul</code> 等外部儲存。</li>
+</ol>
+<p><code>schema_config</code> 各欄位說明：</p>
+<ol start="5">
+<li><code>from</code>: 指定此組 schema 的生效時間。即使只使用一組設定也必須加上，是 Loki 的必要欄位。</li>
+<li><code>store</code>: 使用 <strong>使用時間序列資料庫 (tsdb)</strong> 儲存資料，這是 Loki 的預設儲存方式，並且是撰文當下 Grafana 官方推薦的儲存方案。</li>
+<li><code>object_store</code>: 代表將 chunks 儲存在本機檔案系統 (例如 <code>/tmp/loki/chunks</code> 目錄)，適合用於本地測試。正式環境可改為 <em>S3</em>、<em>GCS</em> 等物件儲存方式。</li>
+<li><code>schema</code>: 代表使用 Grafana 官方的 schema 版本，以提供更佳的查詢效率與結構。若 schema 有變更版本，可參考最新的官方 <a href="https://grafana.com/docs/loki/latest/configure/#period_config">period_config</a>。</li>
+<li><code>index</code>: 設定索引檔的檔名前綴與生成週期，這裡設為每天產生一份 (<code>24h</code>)，前綴為 <code>index_</code>。</li>
+</ol>
+<p>當中需要留意的是 <code>from</code> 屬性 —— 因為它是 <strong>required</strong>。</p>
+<p>Loki 會根據這個時間點來決定使用哪個 schema 來儲存資料，而這樣的設計讓我們可以在未來的版本中，針對不同的時間範圍使用不同的 schema，來定義出不同的 config 以避免一次性重建所有資料結構。</p>
+<h4 id="promtail-設定檔-promtail-configyaml">promtail 設定檔: promtail-config.yaml</h4>
+<p>接下來，我們需要建立一個名為 <strong>promtail-config.yaml</strong> 的設定檔，供前述的 promtail service 使用。</p>
+<p>這份設定主要針對 Docker container 的 log 擷取，以下為設定內容：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#116329;--shiki-dark:#7EE787">server</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  http_listen_port</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">9080</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  grpc_listen_port</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">positions</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#6E7781;--shiki-dark:#8B949E"># 紀錄上次讀取到的日誌位置，避免重複擷取</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  filename</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">/tmp/positions.yaml</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">clients</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#6E7781;--shiki-dark:#8B949E"># 定義要將日誌推送到哪個 Loki instance</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">  - </span><span style="color:#116329;--shiki-dark:#7EE787">url</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">http://loki:3100/loki/api/v1/push</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">scrape_configs</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">  - </span><span style="color:#116329;--shiki-dark:#7EE787">job_name</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">docker</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    docker_sd_configs</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#6E7781;--shiki-dark:#8B949E"># ①</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">      - </span><span style="color:#116329;--shiki-dark:#7EE787">host</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">unix:///var/run/docker.sock</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    relabel_configs</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#6E7781;--shiki-dark:#8B949E"># ②</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">      - </span><span style="color:#116329;--shiki-dark:#7EE787">source_labels</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: [</span><span style="color:#0A3069;--shiki-dark:#A5D6FF">__meta_docker_container_name</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">]</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">        target_label</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">job</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">        regex</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">'/(.*)'</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">        replacement</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">$1</span></span></code></pre>
+<p><code>scrape_configs</code> 各欄位說明：</p>
+<ol>
+<li><code>docker_sd_configs</code>: 使用 Docker 的 <strong>服務發現 (Service Discovery)</strong> 機制，來自動獲取正在運行的 containers 資訊。</li>
+<li><code>relabel_configs</code>: <strong>重新標籤 (Relabeling)</strong> 的設定，這裡我們將抓取到的 container 名稱標籤化為 <code>job</code>，方便後續查詢與過濾。</li>
+</ol>
+<p>啟動完畢後，後續章節將接續目前的進度，將開始介紹如何在 Grafana 中進行日誌的可視化與監控。</p>
+<h2 id="透過-grafana-可視化監控日誌">透過 Grafana 可視化監控日誌</h2>
+<blockquote>
+<p>編輯中。</p>
+</blockquote>
+<p>為了方便測試，我們將 Grafana 的帳號與密碼都設定為 <code>admin</code>。在第一次登入時，便不需要額外做設定。</p>
+<p>細節的設定如下：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#116329;--shiki-dark:#7EE787">services</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  grafana</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    image</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">grafana/grafana:10.2.3</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    ports</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">      - </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">'3000:3000'</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    environment</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">      - </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">GF_SECURITY_ADMIN_USER=admin</span><span style="color:#6E7781;--shiki-dark:#8B949E"> # 將帳號設定為 admin</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">      - </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">GF_SECURITY_ADMIN_PASSWORD=admin</span><span style="color:#6E7781;--shiki-dark:#8B949E"> # 將密碼設定為 admin</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    depends_on</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">      - </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">loki</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">    networks</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">:</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">      - </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">loki</span></span></code></pre>
+<ul>
+<li>Grafana 介紹與安裝
+<ul>
+<li>連接 Loki 進行日誌可視化</li>
+<li>設置爬蟲運行狀態 Dashboard</li>
+</ul>
+</li>
+<li>使用 LogQL 查詢特定資料
+<ul>
+<li>查詢特定時間範圍內的錯誤</li>
+<li>設定告警通知異常狀況</li>
+</ul>
+</li>
+</ul>
+<p><img src="/images/loki-crawler-logs/01-grafana-add-data-source-loki.png" alt="">
+<img src="/images/loki-crawler-logs/02-grafana-add-data-source-loki-connection.png" alt="">
+<img src="/images/loki-crawler-logs/03-grafana-create-dashboard.png" alt="">
+<img src="/images/loki-crawler-logs/04-grafana-add-first-panel.png" alt=""></p>
+<h3 id="範例程式下載">範例程式下載</h3>
+<blockquote>
+<p>完整範例 source code: <a href="https://github.com/wazho/grafana-loki-practice">wazho/grafana-loki-practice</a></p>
+</blockquote>
+<p>範例程式中，包含了 <code>config</code> 資料夾與 Node.js 應用程式的 <code>Dockerfile</code> 等，可以使用以下指令來建立範例的測試環境：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6E7781;--shiki-dark:#8B949E"># 下載範例專案</span></span>
+<span class="line"><span style="color:#953800;--shiki-dark:#FFA657">git</span><span style="color:#0A3069;--shiki-dark:#A5D6FF"> clone</span><span style="color:#0A3069;--shiki-dark:#A5D6FF"> git@github.com:wazho/grafana-loki-practice.git</span></span>
+<span class="line"><span style="color:#6E7781;--shiki-dark:#8B949E"># 進入專案資料夾</span></span>
+<span class="line"><span style="color:#0550AE;--shiki-dark:#79C0FF">cd</span><span style="color:#0A3069;--shiki-dark:#A5D6FF"> grafana-loki-practice</span></span>
+<span class="line"><span style="color:#6E7781;--shiki-dark:#8B949E"># 建立 docker-compose 環境</span></span>
+<span class="line"><span style="color:#953800;--shiki-dark:#FFA657">docker-compose</span><span style="color:#0A3069;--shiki-dark:#A5D6FF"> up</span><span style="color:#0550AE;--shiki-dark:#79C0FF"> -d</span></span></code></pre>
+<h2 id="應用實例與延伸建議">應用實例與延伸建議</h2>
+<blockquote>
+<p>編輯中。</p>
+</blockquote> </article>  <astro-island uid="1KrDO5" prefix="v1" component-url="/_astro/ScrollToTop.TcOVvn_u.js" component-export="default" renderer-url="/_astro/client.B_hw06eU.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ScrollToTop&quot;,&quot;value&quot;:true}" await-children><button aria-label="Scroll to top" fixed right-5 sm:right-30 bottom-30 w-12 h-12 text-lg hover:op100 rounded-full flex="~ items-center justify-center" bg-hex-8883 transition duration-300 z-100 print:hidden class="op0 pointer-events-none"><i i-ri-arrow-up-line></i></button><!--astro:end--></astro-island> <footer class="w-full mt-18 pt-6 pb-8 max-w-3xl text-sm flex flex-col gap-4 border-main border-t !border-op-50 text-dark dark:text-white"><!----><div flex><a nav-link href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a><span op-70>  ©  2025  Ze-Hao Wang (Salmon).</span></div></footer> </main> </body></html>
