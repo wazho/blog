@@ -206,20 +206,22 @@
 </ul>
 <p>這些原則不只適用於 crawler 系統，同樣也適用於排程任務 (cron jobs)、API server、資料處理流程 (如 ETL) 等場景，都是建立健全日誌系統時可參考的設計依據。</p>
 <h3 id="可結構化的日誌設計原則">可結構化的日誌設計原則</h3>
-<p>當你需要快速回答「哪一支爬蟲最常出錯？」或「哪個網址平均最慢？」等類似問題時，扁平化的文字 log 幾乎無法幫上忙，而結構化的 log 則能輕鬆達成。</p>
+<p>當你需要快速回答「哪一支爬蟲最常出錯？」或「哪個網址平均訪問最慢？」等類似問題時，扁平化的文字 log 幾乎無法幫上忙，而結構化的 log 則能輕鬆達成。</p>
 <p>在 JavaScript 或 Node.js 實務中，雖然 <code>console.log()</code> 是最簡單快速的輸出方式，但若希望日誌能被機器判讀、具備良好的過濾條件與分析能力，「可結構化」就變得相當重要。</p>
 <p>所謂 <strong>可結構化日誌 (Structured Logging)</strong>，是指使用具明確欄位命名的格式 (最常見為 JSON) 輸出 log。這樣的做法能讓日誌系統 (如 Loki) 更容易針對欄位進行搜尋與 <strong>聚合 (Aggregation)</strong>，有助於提升查詢效率、視覺化呈現能力，以及與告警系統的整合性。</p>
-<p>例如，若我們在爬取資料過程中發生了錯誤，傳統的 log 記錄方式可能會是：</p>
+<p>例如，若我們在爬取資料過程中發生了解析 JSON 錯誤，傳統的 log 記錄方式可能會是：</p>
 <pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="text"><code><span class="line"><span>2025-01-01 12:00:04 - ERROR - Failed to parse response JSON</span></span></code></pre>
 <p>以 JSON-based 的格式呈現，會變成：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="json"><code><span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">{ </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;timestamp&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;2025-01-01T12:00:04.000Z&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;level&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;error&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;message&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;Failed to parse response JSON&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3"> }</span></span></code></pre>
+<p>為了方便解說，將 JSON 的排版稍作優化：</p>
 <pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="json"><code><span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">{</span></span>
-<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;timestamp&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;2025-01-01T12:00:04Z&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#6E7781;--shiki-dark:#8B949E">// 時間戳記，通常以國際標準 ISO 8601 格式表示，方便後續查詢與排序。</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;timestamp&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;2025-01-01T12:00:04.000Z&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#6E7781;--shiki-dark:#8B949E">// 時間戳記，通常以國際標準 ISO 8601 格式或 UNIX epoch 表示，方便後續查詢與排序。</span></span>
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;level&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;error&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#6E7781;--shiki-dark:#8B949E">// 日誌等級，例如 info、warn、error，用來快速分類與過濾。</span></span>
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;message&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;Failed to parse response JSON&quot;</span><span style="color:#6E7781;--shiki-dark:#8B949E"> // 實際的訊息內容，可搭配 error stack 或說明文字。</span></span>
 <span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">}</span></span></code></pre>
 <p>根據實務場景，可以嘗試加入更多欄位，將有助於支援更細緻的分析：</p>
 <pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="json"><code><span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">{</span></span>
-<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;timestamp&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;2025-01-01T12:00:04Z&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;timestamp&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;2025-01-01T12:00:04.000Z&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;level&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;error&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;message&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;Failed to parse response JSON&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;url&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;https://example.com/api/data&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#6E7781;--shiki-dark:#8B949E">// 發生錯誤的請求網址，有助於追蹤特定目標來源。</span></span>
@@ -311,7 +313,7 @@
 <pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="json"><code><span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">{</span></span>
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;level&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;info&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;message&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;Fetched data successfully&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
-<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;timestamp&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;2025-01-01T12:00:00Z&quot;</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;timestamp&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;2025-01-01T12:00:00.000Z&quot;</span></span>
 <span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">}</span></span></code></pre>
 <p>上述欄位中，<code>level</code> 可對應至 log 等級，<code>timestamp</code> 可支援時序查詢與可視化統計，message 則為實際訊息內容。</p>
 <p>接下來，我們將介紹如何透過 Promtail 擷取這些 logs 並傳送至 Loki 儲存與分析。</p>
@@ -472,7 +474,8 @@
 <p>我們將延續前一章的內容，使用 Grafana 來可視化與監控 Loki 儲存的日誌資料。本章將說明如何設定 Grafana 與 Loki 的連線，並建立 dashboard 來觀察與分析日誌。內容包含：</p>
 <ul>
 <li>安裝與啟動 Grafana</li>
-<li>建立 dashboard 並使用 LogQL 查詢日誌</li>
+<li>建立 dashboard 並加入 panel</li>
+<li>撰寫 LogQL 查詢語言</li>
 <li>設定 dashboard 告警條件</li>
 </ul>
 <h3 id="安裝與啟動-grafana">安裝與啟動 Grafana</h3>
@@ -513,14 +516,15 @@
 <p><img src="/images/loki-crawler-logs/loki-install-03-grafana-add-data-source-loki-connection.png" alt/></p>
 <p>建立完畢，從清單可見目前所有的資料來源。</p>
 <p><img src="/images/loki-crawler-logs/loki-install-04-grafana-data-source-list.png" alt/></p>
-<h3 id="建立-dashboard-並使用-logql-查詢日誌">建立 dashboard 並使用 LogQL 查詢日誌</h3>
+<h3 id="建立-dashboard-並加入-panel">建立 dashboard 並加入 panel</h3>
 <p>完成資料來源設定後，我們就能開始在 Grafana 中建立 dashboard，透過 LogQL 查詢與視覺化分析日誌資料。</p>
-<h4 id="建立新的-dashboard-並加入-panel">建立新的 dashboard 並加入 panel</h4>
+<h4 id="建立新的-dashboard">建立新的 dashboard</h4>
 <p>展開左側選單 <strong>☰ (Menu)</strong> 後，選擇 <strong>Dashboards</strong> 並點擊 <strong>+ Create Dashboard</strong> 按鈕。</p>
 <p><img src="/images/loki-crawler-logs/dashboard-01-create-grafana-dashboard.png" alt/></p>
 <p>進入新建立的 dashboard 後，點擊 <strong>+ Add visualization</strong> 按鈕。</p>
 <p><img src="/images/loki-crawler-logs/dashboard-02-add-visualization.png" alt/></p>
 <p>接著會需要選擇資料來源，這裡選擇剛剛新增的 Loki 資料來源。</p>
+<h4 id="加入-panel">加入 panel</h4>
 <p><img src="/images/loki-crawler-logs/dashboard-03-select-data-source.png" alt/></p>
 <p>確認完畢後，會進入到編輯 <strong>面板 (panel)</strong> 的介面：</p>
 <p><img src="/images/loki-crawler-logs/dashboard-04-edit-panel.png" alt/></p>
@@ -535,9 +539,71 @@
 <p>以上確認無誤，或是再進行微調後，就可以點擊右上方的 <strong>Save</strong> 按鈕，將這個 dashboard 儲存起來。</p>
 <p><img src="/images/loki-crawler-logs/dashboard-08-save-dashboard.png" alt/></p>
 <p>至此，我們已成功從 Grafana 建立 dashboard，並完成了第一個 LogQL 查詢的呈現。接下來，我們可以進一步將查詢轉為統計圖表，或建立告警條件來即時監控異常狀況。</p>
-<h4 id="撰寫-logql-查詢語法">撰寫 LogQL 查詢語法</h4>
+<h3 id="撰寫-logql-查詢語言">撰寫 LogQL 查詢語言</h3>
 <p>在前一小節中，我們所撰寫的查詢語法叫做 <a href="http://grafana.com/docs/loki/latest/query/"><strong>LogQL</strong></a>，可用來針對 log 進行搜尋、過濾、統計與聚合。</p>
+<p>LogQL 支援兩種主要查詢類型：</p>
+<ol>
+<li><strong>Log queries (日誌查詢)</strong>: 用於直接搜尋日誌內容
+<ul>
+<li><a href="https://grafana.com/docs/loki/latest/query/log_queries/">官方說明文件</a></li>
+</ul>
+</li>
+<li><strong>Metric queries (指標查詢)</strong>: 從日誌中產生時間序列資料，進行聚合統計
+<ul>
+<li><a href="https://grafana.com/docs/loki/latest/query/metric_queries/">官方說明文件</a></li>
+</ul>
+</li>
+</ol>
+<h4 id="log-queries">Log queries</h4>
+<p>Log queries 用於「查找具體的日誌行資料」，由 <strong>log stream selector</strong> 搭配 <strong>log pipeline</strong> 組成，基本語法如下：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>{ log_stream_selector } | pipeline_1 | pipeline_2 ...</span></span></code></pre>
+<ul>
+<li>Log stream selector 使用 <code>{</code> 和 <code>}</code> 所包覆，以 <code>key=value</code> 組合描述來源，可使用 <code>,</code> 串接多條件。</li>
+<li>Log pipeline 則是用來對查詢結果進行處理，通常會使用 <code>|</code> 符號來串接多個 pipeline，例如：</li>
+</ul>
+<p>範例如下：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>{ job=&quot;analyzer&quot; } | json | level=&quot;error&quot; | line_format &quot;{{.message}}&quot;</span></span></code></pre>
+<p>語法拆解說明：</p>
+<ul>
+<li><code>{ job=&quot;analyzer&quot; }</code>: 只過濾出 <code>job</code> 為 <code>analyzer</code> 的 log</li>
+<li><code>| json</code>: 將 log 解析為 JSON 格式</li>
+<li><code>| level=&quot;error&quot;</code>: 過濾出 <code>level</code> 為 <code>error</code> 的 log</li>
+<li><code>| line_format &quot;{{.message}}&quot;</code>: 只顯示 <code>message</code> 欄位的內容</li>
+</ul>
+<h4 id="metric-queries">Metric queries</h4>
+<p>Metric queries 則是用來「擴展查詢結果，進行統計或聚合」，基本語法如下：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>aggregation_function({ log_stream_selector } | pipeline_1 ... [range])</span></span></code></pre>
+<p>例如：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>count_over_time({ job=&quot;analyzer&quot; } | json | level=&quot;error&quot; [5m])</span></span></code></pre>
+<p>這段語法的用意是：統計過去 5 分鐘內，來自 <code>analyzer</code> job 且 <code>level=error</code> 的 log 出現次數。</p>
+<p>此外，metric queries 分為 <strong>log range aggregations</strong> 和 <strong>unwrapped range aggregations</strong> 兩種。</p>
+<ul>
+<li><strong>Log range aggregations</strong>: 用來統計某段時間內的 log 數量，例如錯誤出現次數。</li>
+<li><strong>Unwrapped range aggregations</strong>: 針對 log 中的欄位之數值進行平均、最大值等數據運算。</li>
+</ul>
+<p>這兩者屬於進階用法，會在後續章節的實例中再進行更詳細的說明。</p>
+<h4 id="使用-logql-simulator">使用 LogQL simulator</h4>
+<p>如果手邊暫時無法搭建 Loki 環境或模擬應用程式輸出的日誌行為，可以先透過 Grafana 官方提供的 <a href="https://grafana.com/docs/loki/latest/query/analyzer/">LogQL simulator</a> 進行語法測試與練習。</p>
+<p>它適合快速驗證語法是否正確，也能協助理解不同 log pipeline 的操作效果。</p>
+<p>若以下 logs 資料為我們的應用程式所輸出：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="json"><code><span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">{ </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;timestamp&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;2025-01-01T12:00:00.000Z&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;level&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;info&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;message&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;Crawler started&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;env&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;production&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3"> }</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">{ </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;timestamp&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;2025-01-01T12:00:01.000Z&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;level&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;info&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;message&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;Fetching data from URL&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;url&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;https://example.com/api/data&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3"> }</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">{ </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;timestamp&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;2025-01-01T12:00:02.000Z&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;level&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;info&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;message&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;Received response&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;statusCode&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">200</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;durationMs&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">982</span><span style="color:#1F2328;--shiki-dark:#E6EDF3"> }</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">{ </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;timestamp&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;2025-01-01T12:00:03.000Z&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;level&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;warn&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;message&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;Response time is high&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;durationMs&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">1200</span><span style="color:#1F2328;--shiki-dark:#E6EDF3"> }</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">{ </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;timestamp&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;2025-01-01T12:00:04.000Z&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;level&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;error&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;message&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;Failed to parse response JSON&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">, </span><span style="color:#116329;--shiki-dark:#7EE787">&quot;url&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;https://example.com/api/data&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3"> }</span></span></code></pre>
+<p>我們承襲上方的範例，過濾出 <code>level</code> 為 <code>error</code> 的 log，便可以使用以下 LogQL 的 log queries 語法：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>{ job=&quot;analyzer&quot; } | json | level=&quot;error&quot; | line_format &quot;{{.message}}&quot;</span></span></code></pre>
+<p>效果如下：</p>
+<p><img src="/images/loki-crawler-logs/logql-01-example1.png" alt/></p>
 <h3 id="設定-dashboard-告警條件">設定 dashboard 告警條件</h3>
+<p>除了查詢與視覺化日誌資料外，Grafana 也能根據查詢結果設定 <strong>告警條件 (Alerts)</strong>，當某些異常狀況發生時 (如錯誤率過高、特定 log 出現頻繁)，可以即時通知開發或維運人員，提升系統可觀測性與反應效率。</p>
+<p>本節將以「過去 5 分鐘內 error log 數量超過閾值」為例，示範如何在現有的 dashboard panel 上建立告警條件。</p>
+<h4 id="建立告警規則的步驟">建立告警規則的步驟</h4>
+<p>在 Grafana 的 dashboard 中，選擇剛剛建立的 panel，展開右上方的選單 <strong>⋮ (Menu)</strong>，再展開 <strong>More…</strong> 選項，接著選擇 <strong>New alert rule</strong> 選項。</p>
+<p><img src="/images/loki-crawler-logs/alerting-01-new-alert-rule.png" alt/></p>
+<blockquote>
+<p>編輯中。</p>
+</blockquote>
 <h2 id="應用實例與延伸建議">應用實例與延伸建議</h2>
 <blockquote>
 <p>編輯中。</p>
