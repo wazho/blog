@@ -605,6 +605,90 @@
 <p>編輯中。</p>
 </blockquote>
 <h2 id="應用實例與延伸建議">應用實例與延伸建議</h2>
+<p>最後，將介紹一些實際應用的案例，過程中會逐步引導如何設計 logs 到建立相對應的 dashboard。</p>
+<h3 id="確認要觀察的目標">確認要觀察的目標</h3>
+<p>在設計 log 結構與 dashboard 前，最重要的是先釐清「想觀察什麼」，以便針對性地紀錄資料。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>目標</th><th>典型問題範例</th></tr></thead><tbody><tr><td>狀態概覽</td><td>目前有哪些任務執行中？是否有模組沒在動？</td></tr><tr><td>成效分析</td><td>處理成功率？失敗率？</td></tr><tr><td>錯誤追蹤</td><td>哪些類型的錯誤最常發生？在什麼模組？</td></tr><tr><td>效能監控</td><td>每次任務花多久？最久是哪一次？</td></tr><tr><td>日誌查詢</td><td>最近是否有異常？錯誤訊息為何？</td></tr><tr><td>行為趨勢</td><td>某變數過去 3 小時是否有異常升高？</td></tr></tbody></table>
+<h4 id="狀態概覽">狀態概覽</h4>
+<p>我們以以下這則 log 為例：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="json"><code><span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">{</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;timestamp&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;2025-05-24T01:23:45.678Z&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;level&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;INFO&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;message&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;Current progress&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;executionId&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;run-001&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;status&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;RUNNING&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;module&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;Crawler-A&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;numToProcess&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">1000</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;numProcessed&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">420</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">}</span></span></code></pre>
+<p>這筆 log 主要用於記錄任務的進行狀態。欄位設計上：</p>
+<ul>
+<li><code>executionId</code>: 可用來追蹤每次任務的執行實例</li>
+<li><code>status</code>: 目前的任務狀態 (如 RUNNING、COMPLETED)</li>
+<li><code>numToProcess</code> / <code>numProcessed</code>: 顯示任務總數與目前已處理的數量</li>
+</ul>
+<p>透過這些欄位，我們可以在 Grafana 中建立一個 dashboard panel，並設定以下 Query：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>{ job=&quot;node-app&quot; } | json | message=&quot;Current progress&quot;</span></span></code></pre>
+<p>並在 Transform data 中使用 <strong>Extract fields</strong> 的 transformation：</p>
+<p><img src="/images/loki-crawler-logs/panel-01-extract-fields-transformation.png" alt/></p>
+<p>於 <strong>Source</strong> 中選擇 <strong>Line</strong>，將該欄位提取出來；於 <strong>Format</strong> 中選擇 <strong>Key+value pairs</strong>，將以 JSON 進行解析：</p>
+<p><img src="/images/loki-crawler-logs/panel-02-extract-fields-format.png" alt/></p>
+<p>接著點選 <strong>+ Add another transformation</strong>，使用 <strong>Organize fields by name</strong> 的 transformation：</p>
+<p><img src="/images/loki-crawler-logs/panel-03-organize-fields-transformation.png" alt/></p>
+<p>並依照需求調整表格內欄位順序、顯示與否：</p>
+<p><img src="/images/loki-crawler-logs/panel-04-organize-fields-setting.png" alt/></p>
+<p>最後按下 <strong>Save</strong> 或 <strong>Apply</strong>，可以觀察到新建立的 panel 與未使用 transformation 前的差異：</p>
+<p><img src="/images/loki-crawler-logs/panel-05-result.png" alt/></p>
+<h3 id="成效分析">成效分析</h3>
+<blockquote>
+<p>編輯中。</p>
+</blockquote>
+<h3 id="錯誤追蹤">錯誤追蹤</h3>
+<blockquote>
+<p>編輯中。</p>
+</blockquote>
+<h3 id="效能監控">效能監控</h3>
+<blockquote>
+<p>編輯中。</p>
+</blockquote>
+<h3 id="日誌查詢">日誌查詢</h3>
+<blockquote>
+<p>編輯中。</p>
+</blockquote>
+<h3 id="行為趨勢">行為趨勢</h3>
 <blockquote>
 <p>編輯中。</p>
 </blockquote>
