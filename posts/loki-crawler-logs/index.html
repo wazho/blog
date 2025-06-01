@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"> <head><!-- High Priority Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>利用 Grafana Loki 高效收集與監控爬蟲日誌 | Salmon&#39;s Blog</title><meta name="generator" content="Astro v5.6.2"><!-- Low Priority Global Metadata --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" href="/rss.xml" title="RSS"><!-- Page Metadata --><link rel="canonical" href="https://blog.salmon.tw/posts/loki-crawler-logs/"><meta name="description" content="在 Lawsnote 服務期間，我們需要開發數百支網頁抓取程式，並有效率地管理這數百支 crawlers。當任何一支程式發生錯誤時，能夠即時通知相關人員並迅速定位問題，便是我們維運流程中的關鍵。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://blog.salmon.tw/posts/loki-crawler-logs/"><meta property="og:title" content="利用 Grafana Loki 高效收集與監控爬蟲日誌 | Salmon's Blog"><meta property="og:description" content="在 Lawsnote 服務期間，我們需要開發數百支網頁抓取程式，並有效率地管理這數百支 crawlers。當任何一支程式發生錯誤時，能夠即時通知相關人員並迅速定位問題，便是我們維運流程中的關鍵。"><meta property="og:image" content="https://blog.salmon.tw/hero.jpg"><meta property="og:image:alt" content="Website Main Image"><!-- X / Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://blog.salmon.tw/posts/loki-crawler-logs/"><meta property="twitter:title" content="利用 Grafana Loki 高效收集與監控爬蟲日誌 | Salmon's Blog"><meta property="twitter:description" content="在 Lawsnote 服務期間，我們需要開發數百支網頁抓取程式，並有效率地管理這數百支 crawlers。當任何一支程式發生錯誤時，能夠即時通知相關人員並迅速定位問題，便是我們維運流程中的關鍵。"><meta property="twitter:image" content="https://blog.salmon.tw/hero.jpg"><meta name="twitter:image:alt" content="Website Main Image"><script type="module" src="/_astro/BaseHead.astro_astro_type_script_index_0_lang.z8E7Q00g.js"></script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.DSxwJ3tr.js"></script><link rel="stylesheet" href="/_astro/_slug_.Bsnj0eRX.css"><style>[data-astro-transition-scope="astro-lzoyhzq4-1"] { view-transition-name: astro-lzoyhzq4-1; }@layer astro { ::view-transition-old(astro-lzoyhzq4-1) { 
+<!DOCTYPE html><html lang="en"> <head><!-- High Priority Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>利用 Grafana Loki 高效收集與監控爬蟲日誌 | Salmon&#39;s Blog</title><meta name="generator" content="Astro v5.6.2"><!-- Low Priority Global Metadata --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" href="/rss.xml" title="RSS"><!-- Page Metadata --><link rel="canonical" href="https://blog.salmon.tw/posts/loki-crawler-logs/"><meta name="description" content="在 Lawsnote 服務期間，我們需要開發數百支網頁抓取程式，並有效率地管理這數百支 crawlers。當任何一支程式發生錯誤時，能夠即時通知相關人員並迅速定位問題，便是我們維運流程中的關鍵。"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://blog.salmon.tw/posts/loki-crawler-logs/"><meta property="og:title" content="利用 Grafana Loki 高效收集與監控爬蟲日誌 | Salmon's Blog"><meta property="og:description" content="在 Lawsnote 服務期間，我們需要開發數百支網頁抓取程式，並有效率地管理這數百支 crawlers。當任何一支程式發生錯誤時，能夠即時通知相關人員並迅速定位問題，便是我們維運流程中的關鍵。"><meta property="og:image" content="https://blog.salmon.tw/hero.jpg"><meta property="og:image:alt" content="Website Main Image"><!-- X / Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://blog.salmon.tw/posts/loki-crawler-logs/"><meta property="twitter:title" content="利用 Grafana Loki 高效收集與監控爬蟲日誌 | Salmon's Blog"><meta property="twitter:description" content="在 Lawsnote 服務期間，我們需要開發數百支網頁抓取程式，並有效率地管理這數百支 crawlers。當任何一支程式發生錯誤時，能夠即時通知相關人員並迅速定位問題，便是我們維運流程中的關鍵。"><meta property="twitter:image" content="https://blog.salmon.tw/hero.jpg"><meta name="twitter:image:alt" content="Website Main Image"><script type="module" src="/_astro/BaseHead.astro_astro_type_script_index_0_lang.z8E7Q00g.js"></script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.DSxwJ3tr.js"></script><link rel="stylesheet" href="/_astro/_slug_.CLldNEzH.css"><style>[data-astro-transition-scope="astro-lzoyhzq4-1"] { view-transition-name: astro-lzoyhzq4-1; }@layer astro { ::view-transition-old(astro-lzoyhzq4-1) { 
 	animation-duration: 0.4s;
 	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
 	animation-fill-mode: both;
@@ -62,7 +62,7 @@
 <p>如何建立 dashboard、撰寫 LogQL 查詢，以及設定告警通知機制。</p>
 </li>
 <li>
-<p><strong>應用實例與延伸建議</strong> - <a href="#應用實例與延伸建議"><i>Jump</i></a></p>
+<p><strong>應用實例</strong> - <a href="#應用實例"><i>Jump</i></a></p>
 <p>實際案例分享與一些擴充應用的建議。</p>
 </li>
 </ol>
@@ -91,8 +91,7 @@
 <p>若想瞭解各程式的整體執行狀況，以 crawler 舉例有 <em>階段成功和失敗資訊</em>、<em>最常失敗的目標網站</em>、<em>HTTP 狀態碼分布</em> 等，將需自行撰寫腳本分析散落的 log，成效不彰。</p>
 </li>
 </ol>
-<p><img src="/images/loki-crawler-logs/temporary.png" alt="TODO:"/></p>
-<center><p><strong>TODO:</strong></p></center>
+
 <h3 id="什麼樣的資料適合收集">什麼樣的資料適合收集？</h3>
 <p>在設計日誌系統時，並不是所有輸出都適合或需要被收集。我們應該根據系統特性與實際需求，挑選對後續除錯、分析與監控有實質幫助的資料。以開發 crawlers 的經驗來說，建議可以優先考慮以下幾類資訊：</p>
 <ol>
@@ -131,7 +130,7 @@
 </ol>
 <h2 id="設計日誌內容">設計日誌內容</h2>
 <p>撰寫日誌並不是單純的 <code>console.log(&quot;我到了這一行&quot;)</code> 就好。良好的日誌設計，應同時考量 <strong>除錯效率</strong>、<strong>可視化需求</strong> 以及 <strong>機器可讀性</strong> 等面向。</p>
-<p><img src="/images/loki-crawler-logs/temporary.png" alt="TODO: 準備 logs 範例的純文字版本"/></p>
+
 <center><p><strong>日誌中若參雜的一般、重要和錯誤資訊，以人工檢視相當沒有效率。</strong></p></center>
 <p>設想一個情境：某支 crawler 程式在生產環境中執行，產生了數萬行日誌，過程看似順利，卻最終未能正確將資料寫入資料庫。</p>
 <p>這時我們得回頭查看日誌來定位問題。但若資訊過於雜亂、缺乏層次分類，即使錯誤訊息已經出現，也可能輕易被掩埋其中。</p>
@@ -601,10 +600,7 @@
 <h4 id="建立告警規則的步驟">建立告警規則的步驟</h4>
 <p>在 Grafana 的 dashboard 中，選擇剛剛建立的 panel，展開右上方的選單 <strong>⋮ (Menu)</strong>，再展開 <strong>More…</strong> 選項，接著選擇 <strong>New alert rule</strong> 選項。</p>
 <p><img src="/images/loki-crawler-logs/alerting-01-new-alert-rule.png" alt/></p>
-<blockquote>
-<p>編輯中。</p>
-</blockquote>
-<h2 id="應用實例與延伸建議">應用實例與延伸建議</h2>
+<h2 id="應用實例">應用實例</h2>
 <p>最後，將介紹一些實際應用的案例，過程中會逐步引導如何設計 logs 到建立相對應的 dashboard。</p>
 <h3 id="確認要觀察的目標">確認要觀察的目標</h3>
 <p>在設計 log 結構與 dashboard 前，最重要的是先釐清「想觀察什麼」，以便針對性地紀錄資料。</p>
@@ -638,12 +634,11 @@
 
 
 
-
-
-
-<table><thead><tr><th>目標</th><th>典型問題範例</th></tr></thead><tbody><tr><td>狀態概覽</td><td>目前有哪些任務執行中？是否有模組沒在動？</td></tr><tr><td>成效分析</td><td>處理成功率？失敗率？</td></tr><tr><td>錯誤追蹤</td><td>哪些類型的錯誤最常發生？在什麼模組？</td></tr><tr><td>效能監控</td><td>每次任務花多久？最久是哪一次？</td></tr><tr><td>日誌查詢</td><td>最近是否有異常？錯誤訊息為何？</td></tr><tr><td>行為趨勢</td><td>某變數過去 3 小時是否有異常升高？</td></tr></tbody></table>
+<table><thead><tr><th>目標</th><th>典型問題範例</th><th>採用的 Visualization</th></tr></thead><tbody><tr><td>狀態概覽</td><td>目前有哪些任務執行中，進度如何？</td><td>Table</td></tr><tr><td>成效分析</td><td>處理成功率？失敗率？</td><td>Pie Chart</td></tr><tr><td>日誌紀錄</td><td>最近是否有異常？錯誤訊息為何？</td><td>Logs</td></tr><tr><td>行為趨勢</td><td>某變數過去 3 小時是否有異常升高？</td><td>Time series</td></tr></tbody></table>
+<p>預期會製作成以下的 dashboard：</p>
+<p><img src="/images/loki-crawler-logs/dashboard-overview.png" alt/></p>
 <h4 id="狀態概覽">狀態概覽</h4>
-<p>我們以以下這則 log 為例：</p>
+<p>以下這則 log 是用來記錄任務進行狀態的範例：</p>
 <pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="json"><code><span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">{</span></span>
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;timestamp&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;2025-05-24T01:23:45.678Z&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;level&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;INFO&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
@@ -654,45 +649,133 @@
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;numToProcess&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">1000</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;numProcessed&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">420</span></span>
 <span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">}</span></span></code></pre>
-<p>這筆 log 主要用於記錄任務的進行狀態。欄位設計上：</p>
+<p>欄位設計說明：</p>
 <ul>
 <li><code>executionId</code>: 可用來追蹤每次任務的執行實例</li>
 <li><code>status</code>: 目前的任務狀態 (如 RUNNING、COMPLETED)</li>
 <li><code>numToProcess</code> / <code>numProcessed</code>: 顯示任務總數與目前已處理的數量</li>
 </ul>
-<p>透過這些欄位，我們可以在 Grafana 中建立一個 dashboard panel，並設定以下 Query：</p>
+<p>這些欄位可協助我們在 Grafana 中建立任務進度的 Table panel，並設定以下 Query 過濾出 <code>Current progress</code> 的 logs：</p>
 <pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>{ job=&quot;node-app&quot; } | json | message=&quot;Current progress&quot;</span></span></code></pre>
-<p>並在 Transform data 中使用 <strong>Extract fields</strong> 的 transformation：</p>
-<p><img src="/images/loki-crawler-logs/panel-01-extract-fields-transformation.png" alt/></p>
+<p>接著 Transform data 中使用 <strong>Extract fields</strong> 的 transformation：</p>
+<p><img src="/images/loki-crawler-logs/panel-table-01-extract-fields-transformation.png" alt/></p>
 <p>於 <strong>Source</strong> 中選擇 <strong>Line</strong>，將該欄位提取出來；於 <strong>Format</strong> 中選擇 <strong>Key+value pairs</strong>，將以 JSON 進行解析：</p>
-<p><img src="/images/loki-crawler-logs/panel-02-extract-fields-format.png" alt/></p>
+<p><img src="/images/loki-crawler-logs/panel-table-02-extract-fields-format.png" alt/></p>
 <p>接著點選 <strong>+ Add another transformation</strong>，使用 <strong>Organize fields by name</strong> 的 transformation：</p>
-<p><img src="/images/loki-crawler-logs/panel-03-organize-fields-transformation.png" alt/></p>
+<p><img src="/images/loki-crawler-logs/panel-table-03-organize-fields-transformation.png" alt/></p>
 <p>並依照需求調整表格內欄位順序、顯示與否：</p>
-<p><img src="/images/loki-crawler-logs/panel-04-organize-fields-setting.png" alt/></p>
+<p><img src="/images/loki-crawler-logs/panel-table-04-organize-fields-setting.png" alt/></p>
 <p>最後按下 <strong>Save</strong> 或 <strong>Apply</strong>，可以觀察到新建立的 panel 與未使用 transformation 前的差異：</p>
-<p><img src="/images/loki-crawler-logs/panel-05-result.png" alt/></p>
+<p><img src="/images/loki-crawler-logs/panel-table-05-result.png" alt/></p>
 <h3 id="成效分析">成效分析</h3>
-<blockquote>
-<p>編輯中。</p>
-</blockquote>
-<h3 id="錯誤追蹤">錯誤追蹤</h3>
-<blockquote>
-<p>編輯中。</p>
-</blockquote>
-<h3 id="效能監控">效能監控</h3>
-<blockquote>
-<p>編輯中。</p>
-</blockquote>
-<h3 id="日誌查詢">日誌查詢</h3>
-<blockquote>
-<p>編輯中。</p>
-</blockquote>
+<p>執行結束後，我們通常會希望了解該任務的處理結果，例如：</p>
+<ul>
+<li>成功處理幾筆？</li>
+<li>有多少筆失敗？</li>
+<li>是否有資料被略過？</li>
+</ul>
+<p>以下這筆 log 用於紀錄任務執行結尾的總結資訊：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="json"><code><span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">{</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;timestamp&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;2025-05-24T01:23:45.678Z&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;level&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;INFO&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;message&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;Summary of task&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;executionId&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;run-001&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;module&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;Crawler-A&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;numToProcess&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">1000</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;numProcessed&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">1000</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;numFailed&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">50</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;numSkipped&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">10</span></span>
+<span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">}</span></span></code></pre>
+<p>欄位設計說明：</p>
+<ul>
+<li><code>numToProcess</code>: 任務總筆數</li>
+<li><code>numProcessed</code> / <code>numFailed</code> / <code>numSkipped</code>: 分別對應成功、失敗、略過的資料筆數</li>
+</ul>
+<p>這些欄位可協助我們在 Grafana 中建立任務進度的 Pie Chart panel，視覺化顯示處理結果的比例分佈。</p>
+<p>在 Query 區塊輸入以下語法，過濾出 <code>Summary of task</code> 類型的 logs：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>{ job=&quot;node-app&quot; } | json | message=&quot;Summary of task&quot;</span></span></code></pre>
+<p>並在 Visualization 中選擇 <strong>Pie chart</strong>，接著在 <strong>Field</strong> 中選擇 <code>numProcessed</code>、<code>numFailed</code> 與 <code>numSkipped</code> 欄位：</p>
+<p><img src="/images/loki-crawler-logs/panel-pie-chart-01-visualization.png" alt/></p>
+<p>為了讓要資料能夠被 Pie chart 正確解析，在 <strong>Transform data</strong> 中依序使用以下四種 transformations：</p>
+<ol>
+<li><strong>Extract fields</strong>: 將 <code>numProcessed</code>、<code>numFailed</code> 與 <code>numSkipped</code> 欄位提取出來
+<ul>
+<li>Source 選擇 <strong>Line</strong></li>
+<li>Format 選擇 <strong>Key+value pairs</strong></li>
+<li>勾選 <strong>Replace all fields</strong></li>
+</ul>
+</li>
+<li><strong>Reduce fields</strong>: 只需要最新的一筆資料
+<ul>
+<li>Mode 選擇 <strong>Reduce fields</strong></li>
+<li>Calculations 選擇 <strong>First *</strong> 或 <strong>First</strong></li>
+</ul>
+</li>
+<li><strong>Organize fields by name</strong>: 將欄位調整為視覺化時使用的標籤名稱
+<ul>
+<li>將 <code>numProcessed</code> 更名為 <code>Success</code></li>
+<li>將 <code>numFailed</code> 更名為 <code>Failed</code></li>
+<li>將 <code>numSkipped</code> 更名為 <code>Skipped</code></li>
+</ul>
+</li>
+<li><strong>Convert field type</strong>: 將欄位轉換為數值型別，才能夠被 Pie chart 正確解析
+<ul>
+<li>將 <code>Processed</code>、<code>Failed</code> 與 <code>Skipped</code> 欄位轉換為 <strong>Number</strong></li>
+</ul>
+</li>
+</ol>
+<p>過程中，可開啟 <strong>Table view</strong> 模式觀察 transformation 的效果是否合乎期待：</p>
+<p><img src="/images/loki-crawler-logs/panel-pie-chart-02-table-view.png" alt/></p>
+<p>確認資料設定符合預期後，可以再將其關閉。</p>
+<p>接著在 <strong>Visualization</strong> 中調整 Pie chart 的樣式與顯示方式：</p>
+<ul>
+<li><strong>Piechart type</strong>: 設定為 <strong>Donut</strong></li>
+<li><strong>Labels</strong>: 設定為 <strong>Percent</strong></li>
+</ul>
+<p>即會呈現如下結果：</p>
+<p><img src="/images/loki-crawler-logs/panel-pie-chart-03-result.png" alt/></p>
+<h3 id="日誌紀錄">日誌紀錄</h3>
+<p>除了透過統計與圖表來掌握任務概況，我們有時也需要直接查看原始日誌內容，以協助下數幾種情境：</p>
+<ul>
+<li>確認錯誤訊息的細節與上下文</li>
+<li>排查非預期的行為或資料問題</li>
+<li>驗證系統是否如預期執行流程</li>
+</ul>
+<p>為了查看所有 log 訊息 (包含 INFO、ERROR 等層級)，我們可以沿用前面範例所產生的 logs，在 Query 區塊輸入以下語法，完整接收所有輸出：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>{ job=&quot;node-app&quot; } | json</span></span></code></pre>
+<p>並在 Visualization 中選擇 <strong>Logs</strong>，這樣就能直接查看所有來自 <code>node-app</code> 的日誌行為。</p>
+<p><img src="/images/loki-crawler-logs/panel-logs-01-visualization.png" alt/></p>
+<p>然而，呈現的資料格式不夠直觀，我們可以使用 <code>line_format</code> 來調整日誌的顯示格式，使其更易讀。</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>{ job=&quot;node-app&quot; } | json | line_format &quot;[{{.module}}] [{{.level}}] ▶️ {{.message}}&quot;</span></span></code></pre>
+<p>這段設定會將原始 log 轉為類似這樣的格式：</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>[Crawler-A] [INFO] ▶️ Current progress</span></span></code></pre>
+<p><img src="/images/loki-crawler-logs/panel-logs-02-line-format.png" alt/></p>
 <h3 id="行為趨勢">行為趨勢</h3>
-<blockquote>
-<p>編輯中。</p>
-</blockquote>
-<h3 id="範例程式下載">範例程式下載</h3>
+<p>除了統計每次任務的總結結果，我們有時也希望觀察某些「變數在時間上的變化趨勢」，以便找出異常升高或某段時間異常高頻率的狀況。</p>
+<p>舉例來說，我們可能會希望知道：</p>
+<ul>
+<li>哪段時間 <code>numFailed</code> 明顯上升？</li>
+<li>哪些模組在某個時段特別不穩定？</li>
+</ul>
+<p>這類觀察非常適合使用 <code>unwrap</code> 搭配 <code>max_over_time</code> 函數，將 log 中的欄位拉出來轉為 time series 數據，進而畫出時間趨勢圖。</p>
+<pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>max_over_time(</span></span>
+<span class="line"><span>  { job=&quot;node-app&quot; }</span></span>
+<span class="line"><span>    | json</span></span>
+<span class="line"><span>    | message=&quot;Current progress&quot;</span></span>
+<span class="line"><span>    | unwrap numFailed</span></span>
+<span class="line"><span>  [$__interval]</span></span>
+<span class="line"><span>) by (executionId)</span></span></code></pre>
+<ul>
+<li><code>unwrap numFailed</code>: 從 log 中取出 <code>numFailed</code> 欄位作為數值</li>
+<li><code>max_over_time(...)</code>: 在每個時間區段中取最大值，其中 <code>$__interval</code> 會自動根據 dashboard 的時間範圍調整</li>
+<li><code>by (module)</code>: 依照 module label 分組，讓每個模組產生一條獨立的 time series</li>
+</ul>
+<p>在 Visualization 中選擇 <strong>Time series</strong>，搭配 <strong>Table view</strong> 檢視檢視得知，各時間點的 <code>numFailed</code> 數值已被正確提取出來。</p>
+<p><img src="/images/loki-crawler-logs/panel-time-series-01-visualization.png" alt/></p>
+<p>由於先前已在 Query 中使用了 <code>by (executionId)</code>，因此每個 <code>executionId</code> 都會有一條獨立的線條，這樣就能清楚看到每次任務的失敗數量隨時間的變化。</p>
+<p><img src="/images/loki-crawler-logs/panel-time-series-02-result.png" alt/></p>
+<p>從上圖可以看出，某些任務在特定時間點的 <code>numFailed</code> 明顯上升，進而可以對系統現況進行更深入的分析。</p>
+<h2 id="範例程式下載">範例程式下載</h2>
 <blockquote>
 <p>完整範例 source code: <a href="https://github.com/wazho/grafana-loki-practice">wazho/grafana-loki-practice</a></p>
 </blockquote>
