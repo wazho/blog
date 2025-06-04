@@ -188,7 +188,7 @@
 <ul>
 <li>
 <p><strong>可用於判斷系統是否「有在運作」</strong></p>
-<p>包含任務的開始、結束、請求是否成功等，這些都是觀察系統狀態的基礎資訊。這類訊息適合設為 <code>info</code> 等級，作為系統流程的日常記錄依據。</p>
+<p>包含任務的開始、結束、請求是否成功等，這些都是觀察系統狀態的基礎資訊。這類訊息適合設為 <code>info</code> 等級，作為系統流程的日常紀錄依據。</p>
 </li>
 <li>
 <p><strong>可用於觀察效能瓶頸或趨勢</strong></p>
@@ -339,7 +339,7 @@
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  http_listen_port</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">9080</span></span>
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  grpc_listen_port</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0550AE;--shiki-dark:#79C0FF">0</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">positions</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#6E7781;--shiki-dark:#8B949E"># 紀錄上次讀取到的日誌位置，避免重複擷取</span></span>
+<span class="line"><span style="color:#116329;--shiki-dark:#7EE787">positions</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#6E7781;--shiki-dark:#8B949E"># 記錄上次讀取到的日誌位置，避免重複擷取</span></span>
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  filename</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">/tmp/positions.yaml</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">clients</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#6E7781;--shiki-dark:#8B949E"># 定義要將日誌推送到哪個 Loki instance</span></span>
@@ -603,7 +603,7 @@
 <h2 id="應用實例">應用實例</h2>
 <p>最後，將介紹一些實際應用的案例，過程中會逐步引導如何設計 logs 到建立相對應的 dashboard。</p>
 <h3 id="確認要觀察的目標">確認要觀察的目標</h3>
-<p>在設計 log 結構與 dashboard 前，最重要的是先釐清「想觀察什麼」，以便針對性地紀錄資料。</p>
+<p>在設計 log 結構與 dashboard 前，最重要的是先釐清「想觀察什麼」，以便針對性地記錄資料。</p>
 
 
 
@@ -674,7 +674,7 @@
 <li>有多少筆失敗？</li>
 <li>是否有資料被略過？</li>
 </ul>
-<p>以下這筆 log 用於紀錄任務執行結尾的總結資訊：</p>
+<p>以下這筆 log 用於記錄任務執行結尾的總結資訊：</p>
 <pre class="astro-code astro-code-themes github-light-default github-dark-default" style="background-color:#ffffff;--shiki-dark-bg:#0d1117;color:#1f2328;--shiki-dark:#e6edf3;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="json"><code><span class="line"><span style="color:#1F2328;--shiki-dark:#E6EDF3">{</span></span>
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;timestamp&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;2025-05-24T01:23:45.678Z&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
 <span class="line"><span style="color:#116329;--shiki-dark:#7EE787">  &quot;level&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">: </span><span style="color:#0A3069;--shiki-dark:#A5D6FF">&quot;INFO&quot;</span><span style="color:#1F2328;--shiki-dark:#E6EDF3">,</span></span>
